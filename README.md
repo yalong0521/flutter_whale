@@ -1,4 +1,4 @@
-# Flutter项目组件库-base
+# Flutter项目组件库-Whale
 ## v1.0
 ## Features
 - 动态尺寸，提供屏幕适配能力（adapt）
