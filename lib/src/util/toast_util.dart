@@ -21,7 +21,8 @@ class ToastUtil {
   static Toast? _previous;
 
   /// 最常用的方式，单独提供一个方法
-  static void show(String text) => showImmediately(Toast(text));
+  static void show(String text) =>
+      showImmediately(appConfig.toastConfig?.toast?.call(text) ?? Toast(text));
 
   /// 按顺序显示，即等待前面的都显示完(如果有的话)再显示当前的
   static void showInOrder(Toast toast) => _showByYourself(toast, false);
@@ -124,8 +125,8 @@ class ToastUtil {
     );
   }
 
-  static ToastBuilder get _toastBuilder {
-    var builder = appConfig.toastBuilder;
+  static Widget Function(String text) get _toastBuilder {
+    var builder = appConfig.toastConfig?.builder;
     if (builder != null) return builder;
     return (text) {
       return Container(

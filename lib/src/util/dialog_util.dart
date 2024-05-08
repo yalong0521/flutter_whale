@@ -1,7 +1,7 @@
-import 'package:flutter_whale/flutter_whale.dart';
-import 'package:flutter_whale/src/ext/num_ext.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_whale/flutter_whale.dart';
+import 'package:flutter_whale/src/ext/num_ext.dart';
 
 class DialogUtil {
   DialogUtil._();
@@ -10,10 +10,12 @@ class DialogUtil {
     String? text,
     GlobalKey<NavigatorState>? navKey,
   }) {
+    var config = appConfig.loadingConfig;
     showDialog(
       navKey: navKey,
-      barrierDismissible: false,
-      (context) => LoadingDialog(text),
+      barrierDismissible: config.cancelable,
+      barrierColor: config.barrierColor,
+      (context) => config.builder(text),
     );
   }
 
@@ -78,10 +80,10 @@ class DialogTransition<T> extends RawDialogRoute<T> {
   }
 }
 
-class LoadingDialog extends Dialog {
+class DefaultLoadingDialog extends Dialog {
   final String? text;
 
-  const LoadingDialog(this.text, {super.key});
+  const DefaultLoadingDialog(this.text, {super.key});
 
   @override
   Color? get backgroundColor => Colors.transparent;
@@ -90,13 +92,13 @@ class LoadingDialog extends Dialog {
   double? get elevation => 0;
 
   @override
-  Widget? get child => _LoadingDialogWidget(text);
+  Widget? get child => _DefaultLoadingDialogWidget(text);
 }
 
-class _LoadingDialogWidget extends StatelessWidget {
+class _DefaultLoadingDialogWidget extends StatelessWidget {
   final String? text;
 
-  const _LoadingDialogWidget(this.text);
+  const _DefaultLoadingDialogWidget(this.text);
 
   @override
   Widget build(BuildContext context) {

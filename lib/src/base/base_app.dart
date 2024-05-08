@@ -1,12 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_whale/flutter_whale.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
 
 typedef DpConverter = double Function(num dp);
 
 typedef SpConverter = double Function(num sp);
-
-typedef ToastBuilder = Widget Function(String text);
 
 typedef BaseWidgetBuilder = Widget Function(
     BuildContext context, GlobalKey<NavigatorState> baseKey);
@@ -19,21 +16,29 @@ final GlobalKey<NavigatorState> _baseKey = GlobalKey<NavigatorState>();
 
 class AppConfig extends ChangeNotifier {
   String logTag;
-  ToastBuilder? toastBuilder;
+  ToastConfig? toastConfig;
   TransitionType pageTransitionType;
   TransitionType dialogTransitionType;
   DpConverter dpConverter;
   SpConverter spConverter;
+  LoadingConfig loadingConfig;
 
   AppConfig({
     this.logTag = '基础组件',
-    this.toastBuilder,
+    this.toastConfig,
     this.pageTransitionType = TransitionType.theme,
     this.dialogTransitionType = TransitionType.fade,
     DpConverter? dpConverter,
     SpConverter? spConverter,
+    LoadingConfig? loadingConfig,
   })  : dpConverter = dpConverter ?? ((dp) => dp.toDouble()),
-        spConverter = spConverter ?? ((sp) => sp.toDouble());
+        spConverter = spConverter ?? ((sp) => sp.toDouble()),
+        loadingConfig = loadingConfig ??
+            LoadingConfig(
+              builder: (text) => DefaultLoadingDialog(text),
+              cancelable: false,
+              barrierColor: Colors.black38,
+            );
 }
 
 class BaseApp extends StatelessWidget {
@@ -49,4 +54,22 @@ class BaseApp extends StatelessWidget {
       child: builder(context, _baseKey),
     );
   }
+}
+
+class LoadingConfig {
+  final Widget Function(String? text) builder;
+  final bool cancelable;
+  final Color barrierColor;
+
+  const LoadingConfig(
+      {required this.builder,
+      required this.cancelable,
+      required this.barrierColor});
+}
+
+class ToastConfig {
+  final Toast Function(String text)? toast;
+  final Widget Function(String text)? builder;
+
+  const ToastConfig({this.toast, this.builder});
 }

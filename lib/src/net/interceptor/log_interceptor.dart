@@ -6,7 +6,7 @@ import 'package:flutter_whale/flutter_whale.dart';
 class LogsInterceptor extends Interceptor {
   @override
   onRequest(RequestOptions options, handler) async {
-    LogUtil.log('请求地址: ${options.baseUrl}${options.path} (${options.method})');
+    LogUtil.log('请求地址: ${options.uri.toString()} (${options.method})');
     for (var value in options.headers.entries) {
       if (value.value == null) options.headers[value.key] = '';
     }
@@ -22,11 +22,6 @@ class LogsInterceptor extends Interceptor {
         } else {
           LogUtil.log('请求体: ${jsonEncode(options.data)}');
         }
-      }
-    }
-    if (options.method == 'GET') {
-      if (options.queryParameters.isNotEmpty) {
-        LogUtil.log('请求参数: ${options.queryParameters}');
       }
     }
     return super.onRequest(options, handler);
