@@ -16,7 +16,7 @@ class RouteUtil {
     bool opaque = true,
     bool maintainState = true,
     bool clearStack = false,
-    NavigatorState? nav,
+    BuildContext? context,
   }) {
     var route = PageTransition<T>(
       child: page,
@@ -26,7 +26,7 @@ class RouteUtil {
       opaque: opaque,
       maintainState: maintainState,
     );
-    var navigator = nav ?? Navigator.of(baseContext);
+    var navigator = Navigator.of(context ?? baseContext);
     if (clearStack) {
       return navigator.pushAndRemoveUntil<T>(
         route,
@@ -45,10 +45,9 @@ class RouteUtil {
     bool opaque = true,
     bool maintainState = true,
     TO? result,
-    NavigatorState? nav,
+    BuildContext? context,
   }) {
-    var navigator = nav ?? Navigator.of(baseContext);
-    return navigator.pushReplacement<T, TO>(
+    return Navigator.of(context ?? baseContext).pushReplacement<T, TO>(
       PageTransition(
         child: page,
         arguments: arguments,
@@ -61,8 +60,8 @@ class RouteUtil {
     );
   }
 
-  static void pop<T>({T? result, GlobalKey<NavigatorState>? navKey}) {
-    return (navKey?.currentState ?? Navigator.of(baseContext)).pop<T>(result);
+  static void pop<T>({T? result, BuildContext? context}) {
+    return Navigator.of(context ?? baseContext).pop<T>(result);
   }
 }
 

@@ -12,7 +12,7 @@ abstract class BasePage<M extends BaseModel> extends StatefulWidget {
     TransitionType? transition,
     bool clearStack = false,
     bool? opaque,
-    GlobalKey<NavigatorState>? navKey,
+    BuildContext? context,
   }) {
     return RouteUtil.to<T>(
       ChangeNotifierProvider(create: createModel, child: this),
@@ -20,7 +20,7 @@ abstract class BasePage<M extends BaseModel> extends StatefulWidget {
       transition: transition,
       clearStack: clearStack,
       opaque: opaque ?? true,
-      nav: navKey?.currentState,
+      context: context,
     );
   }
 
@@ -30,7 +30,7 @@ abstract class BasePage<M extends BaseModel> extends StatefulWidget {
     TransitionType? transition,
     TO? result,
     bool? opaque,
-    GlobalKey<NavigatorState>? navKey,
+    BuildContext? context,
   }) {
     return RouteUtil.off<T, TO>(
       ChangeNotifierProvider(create: createModel, child: this),
@@ -38,7 +38,7 @@ abstract class BasePage<M extends BaseModel> extends StatefulWidget {
       transition: transition,
       result: result,
       opaque: opaque ?? true,
-      nav: navKey?.currentState,
+      context: context,
     );
   }
 
