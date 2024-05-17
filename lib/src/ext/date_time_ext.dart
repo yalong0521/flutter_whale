@@ -1,13 +1,13 @@
-import 'package:flutter_whale/src/util/date_format.dart' as f;
 import 'package:flutter/material.dart';
+import 'package:flutter_whale/src/util/date_format.dart' as f;
 
 extension DateTimeExt on DateTime {
   bool belong(DateTimeRange range) {
     return !isBefore(range.start) && !isAfter(range.end);
   }
 
-  String formatDate(String split) {
-    return f.formatDate(this, [f.yyyy, split, f.mm, split, f.dd]);
+  String formatDate([String? split]) {
+    return f.formatDate(this, [f.yyyy, split ?? '', f.mm, split ?? '', f.dd]);
   }
 
   /// ---> 2023-11-29

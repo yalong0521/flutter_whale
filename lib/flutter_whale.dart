@@ -6,6 +6,7 @@ export 'src/base/base_model.dart';
 export 'src/base/base_page.dart';
 export 'src/ext/date_time_ext.dart';
 export 'src/ext/formatter_ext.dart';
+export 'src/ext/func_ext.dart';
 export 'src/ext/future_ext.dart';
 export 'src/ext/iterable_ext.dart';
 export 'src/ext/map_ext.dart';
