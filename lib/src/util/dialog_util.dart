@@ -8,11 +8,11 @@ class DialogUtil {
 
   static void showLoading({
     String? text,
-    GlobalKey<NavigatorState>? navKey,
+    BuildContext? context,
   }) {
     var config = appConfig.loadingConfig;
     showDialog(
-      navKey: navKey,
+      context: context,
       barrierDismissible: config.cancelable,
       barrierColor: config.barrierColor,
       (context) => config.builder(text),
@@ -20,9 +20,9 @@ class DialogUtil {
   }
 
   static void hideLoading({
-    GlobalKey<NavigatorState>? navKey,
+    BuildContext? context,
   }) {
-    Navigator.of(navKey?.currentContext ?? baseContext).pop();
+    Navigator.of(context ?? baseContext).pop();
   }
 
   static Future<T?> showDialog<T>(
@@ -32,9 +32,9 @@ class DialogUtil {
     bool barrierDismissible = true,
     Color barrierColor = Colors.black38,
     Object? arguments,
-    GlobalKey<NavigatorState>? navKey,
+    BuildContext? context,
   }) {
-    return Navigator.of(navKey?.currentContext ?? baseContext).push<T>(
+    return Navigator.of(context ?? baseContext).push<T>(
       DialogTransition(
         builder: builder,
         type: transition ?? appConfig.dialogTransitionType,

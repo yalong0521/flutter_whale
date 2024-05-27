@@ -1,14 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_whale/flutter_whale.dart';
 
-enum TapType { none, throttle, debounce }
+enum TapBehavior {
+  /// 不做处理
+  none,
+
+  /// 节流：马上触发，指定时间[milliseconds]内不会再次触发
+  throttle,
+
+  /// 防抖：延迟指定时间触发[milliseconds]
+  debounce;
+}
 
 class TapWrapper extends StatefulWidget {
   final Widget child;
   final GestureTapCallback onTap;
   final GestureLongPressCallback? onLongPress;
   final double? pressedOpacity;
-  final TapType tapType;
+  final TapBehavior behavior;
   final int? milliseconds;
 
   const TapWrapper({
@@ -17,7 +26,7 @@ class TapWrapper extends StatefulWidget {
     required this.onTap,
     this.onLongPress,
     this.pressedOpacity,
-    this.tapType = TapType.none,
+    this.behavior = TapBehavior.none,
     this.milliseconds,
   });
 
@@ -31,11 +40,7 @@ class _TapWrapperState extends State<TapWrapper> {
 
   @override
   void initState() {
-    _onTap = widget.tapType == TapType.debounce
-        ? widget.onTap.debounce(widget.milliseconds)
-        : widget.tapType == TapType.throttle
-            ? widget.onTap.throttle(widget.milliseconds)
-            : widget.onTap;
+    _processBehavior();
     super.initState();
   }
 
@@ -43,7 +48,7 @@ class _TapWrapperState extends State<TapWrapper> {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: _onTap,
+      onTap: () => _onTap(),
       onLongPress: widget.onLongPress,
       onTapDown: (details) => notifyOpacityChanged(true),
       onTapUp: (details) => notifyOpacityChanged(false),
@@ -61,12 +66,17 @@ class _TapWrapperState extends State<TapWrapper> {
   @override
   void didUpdateWidget(covariant TapWrapper oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.tapType != widget.tapType) {
-      _onTap = widget.tapType == TapType.debounce
-          ? widget.onTap.debounce(widget.milliseconds)
-          : widget.tapType == TapType.throttle
-              ? widget.onTap.throttle(widget.milliseconds)
-              : widget.onTap;
+    if (oldWidget.behavior != widget.behavior ||
+        oldWidget.onTap != widget.onTap) {
+      _processBehavior();
     }
+  }
+
+  void _processBehavior() {
+    _onTap = widget.behavior == TapBehavior.debounce
+        ? widget.onTap.debounce(widget.milliseconds)
+        : widget.behavior == TapBehavior.throttle
+            ? widget.onTap.throttle(widget.milliseconds)
+            : widget.onTap;
   }
 }

@@ -34,11 +34,7 @@ class AppConfig extends ChangeNotifier {
   })  : dpConverter = dpConverter ?? ((dp) => dp.toDouble()),
         spConverter = spConverter ?? ((sp) => sp.toDouble()),
         loadingConfig = loadingConfig ??
-            LoadingConfig(
-              builder: (text) => DefaultLoadingDialog(text),
-              cancelable: false,
-              barrierColor: Colors.black38,
-            );
+            LoadingConfig(builder: (text) => DefaultLoadingDialog(text));
 }
 
 class BaseApp extends StatelessWidget {
@@ -62,9 +58,9 @@ class LoadingConfig {
   final Color barrierColor;
 
   const LoadingConfig(
-      {required this.builder,
-      required this.cancelable,
-      required this.barrierColor});
+      {required this.builder, bool? cancelable, Color? barrierColor})
+      : cancelable = cancelable ?? false,
+        barrierColor = barrierColor ?? Colors.black38;
 }
 
 class ToastConfig {

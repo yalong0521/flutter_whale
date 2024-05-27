@@ -106,7 +106,7 @@ abstract class BaseClient {
     bool showLoading = true,
     dynamic extra,
     String? loadingText,
-    GlobalKey<NavigatorState>? navKey,
+    BuildContext? context,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
@@ -121,7 +121,7 @@ abstract class BaseClient {
       cancelToken: cancelToken,
       extra: extra,
       loadingText: loadingText,
-      navKey: navKey,
+      context: context,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
     );
@@ -138,7 +138,7 @@ abstract class BaseClient {
     bool showLoading = true,
     dynamic extra,
     String? loadingText,
-    GlobalKey<NavigatorState>? navKey,
+    BuildContext? context,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
@@ -154,7 +154,7 @@ abstract class BaseClient {
       cancelToken: cancelToken,
       extra: extra,
       loadingText: loadingText,
-      navKey: navKey,
+      context: context,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
     );
@@ -170,7 +170,7 @@ abstract class BaseClient {
     bool showLoading = true,
     dynamic extra,
     String? loadingText,
-    GlobalKey<NavigatorState>? navKey,
+    BuildContext? context,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
@@ -185,7 +185,7 @@ abstract class BaseClient {
       cancelToken: cancelToken,
       extra: extra,
       loadingText: loadingText,
-      navKey: navKey,
+      context: context,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
     );
@@ -201,7 +201,7 @@ abstract class BaseClient {
     bool showLoading = true,
     dynamic extra,
     String? loadingText,
-    GlobalKey<NavigatorState>? navKey,
+    BuildContext? context,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
@@ -216,7 +216,7 @@ abstract class BaseClient {
       cancelToken: cancelToken,
       extra: extra,
       loadingText: loadingText,
-      navKey: navKey,
+      context: context,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
     );
@@ -234,58 +234,63 @@ abstract class BaseClient {
     CancelToken? cancelToken,
     dynamic extra,
     String? loadingText,
-    GlobalKey<NavigatorState>? navKey,
+    BuildContext? context,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) async {
-    try {
-      if (showLoading) {
-        DialogUtil.showLoading(text: loadingText, navKey: navKey);
+    if (showLoading) {
+      DialogUtil.showLoading(text: loadingText, context: context);
+    }
+    parser = parser ?? (validData) => validData;
+    options ??= Options();
+    options.method = method;
+    if (data is Map) {
+      data.removeWhere((key, value) => value == null);
+    }
+    if (parameters != null) {
+      parameters.removeWhere((key, value) => value == null);
+    }
+    var response = await _dio
+        .request(
+      path,
+      data: data,
+      queryParameters: parameters,
+      cancelToken: cancelToken,
+      options: options,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    )
+        .then(
+      (response) {
+        if (showLoading) DialogUtil.hideLoading(context: context);
+        return response;
+      },
+      onError: (e) {
+        if (showLoading) DialogUtil.hideLoading(context: context);
+        return _onError(e);
+      },
+    );
+    if (response.statusCode == 200) {
+      if (original) {
+        // 不解析，返回原始数据
+        return BaseResponse(success: true, data: parser(response.data));
       }
-      parser = parser ?? (validData) => validData;
-      options ??= Options();
-      options.method = method;
-      if (data is Map) {
-        data.removeWhere((key, value) => value == null);
-      }
-      if (parameters != null) {
-        parameters.removeWhere((key, value) => value == null);
-      }
-      var response = await _dio.request(
-        path,
-        data: data,
-        queryParameters: parameters,
-        cancelToken: cancelToken,
-        options: options,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-      );
-      if (response.statusCode == 200) {
-        if (original) {
-          // 不解析，返回原始数据
-          return BaseResponse(success: true, data: parser(response.data));
-        }
-        return responseWrapper(response.data, parser, extra);
-      } else {
-        return BaseResponse(success: false, errorMsg: response.statusMessage);
-      }
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.badResponse) {
-        return badResponseWrapper(e.response?.data);
-      }
-      return BaseResponse(success: false, errorMsg: getDioErrorDesc(e));
-    } catch (a, b) {
-      LogUtil.log('数据解析异常：($a)\n$b');
-      return BaseResponse(success: false, errorMsg: '数据解析异常');
-    } finally {
-      if (showLoading) DialogUtil.hideLoading(navKey: navKey);
+      return responseWrapper(response.data, parser, extra);
+    } else {
+      return BaseResponse(success: false, errorMsg: response.statusMessage);
     }
   }
 
   BaseResponse<T> responseWrapper<T>(
       data, T Function(dynamic data) parser, dynamic extra);
 
-  BaseResponse<T> badResponseWrapper<T>(data) {
-    return BaseResponse(success: false, errorMsg: '请求异常');
+  Response _onError(dynamic error) {
+    if (error is DioException) {
+      return Response(
+        requestOptions: error.requestOptions,
+        statusMessage: getDioErrorDesc(error),
+      );
+    }
+    return Response(requestOptions: RequestOptions(), statusMessage: 'unknown');
   }
 }
