@@ -34,21 +34,13 @@ class TransitionUtil {
           child: child,
         );
       case TransitionType.rightToLeft:
-        return Platform.isAndroid
-            ? SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1, 0),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(parent: animation, curve: curve)),
-                child: child,
-              )
-            : const CupertinoPageTransitionsBuilder().buildTransitions(
-                pageRoute,
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-              );
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1, 0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: animation, curve: curve)),
+          child: child,
+        );
       case TransitionType.leftToRight:
         return SlideTransition(
           position: Tween<Offset>(

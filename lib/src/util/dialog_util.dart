@@ -3,26 +3,51 @@ import 'package:flutter/material.dart';
 import 'package:flutter_whale/flutter_whale.dart';
 import 'package:flutter_whale/src/ext/num_ext.dart';
 
+class _LoadingOverlay {
+  final OverlayEntry entry;
+  final String? text;
+
+  const _LoadingOverlay(this.entry, {this.text});
+}
+
 class DialogUtil {
   DialogUtil._();
+
+  static Map<BuildContext, _LoadingOverlay> _loadingOverlayMap = {};
 
   static void showLoading({
     String? text,
     BuildContext? context,
   }) {
-    var config = appConfig.loadingConfig;
-    showDialog(
-      context: context,
-      barrierDismissible: config.cancelable,
-      barrierColor: config.barrierColor,
-      (context) => config.builder(text),
-    );
+    var ctx = context ?? baseContext;
+    var loadingOverlay = _loadingOverlayMap[ctx];
+    if (loadingOverlay == null || loadingOverlay.text != text) {
+      if (loadingOverlay != null) {
+        loadingOverlay.entry.remove();
+      }
+      var config = appConfig.loadingConfig;
+      var overlayState = Navigator.of(ctx).overlay;
+      var entry = OverlayEntry(
+        builder: (_) => AbsorbPointer(
+          child: Stack(
+            children: [
+              Container(color: config.barrierColor),
+              config.builder(text),
+            ],
+          ),
+        ),
+      );
+      overlayState?.insert(entry);
+      _loadingOverlayMap[ctx] = _LoadingOverlay(entry, text: text);
+    }
   }
 
-  static void hideLoading({
-    BuildContext? context,
-  }) {
-    Navigator.of(context ?? baseContext).pop();
+  static void hideLoading({BuildContext? context}) {
+    var ctx = context ?? baseContext;
+    var loadingOverlay = _loadingOverlayMap[ctx];
+    if (loadingOverlay == null) return;
+    loadingOverlay.entry.remove();
+    _loadingOverlayMap.remove(ctx);
   }
 
   static Future<T?> showDialog<T>(

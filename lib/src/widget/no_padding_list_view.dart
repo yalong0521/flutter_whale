@@ -9,6 +9,7 @@ class NoPaddingListView extends StatelessWidget {
   final bool removeLeft;
   final bool removeTop;
   final bool removeRight;
+  final ScrollController? controller;
 
   const NoPaddingListView.builder({
     super.key,
@@ -19,6 +20,7 @@ class NoPaddingListView extends StatelessWidget {
     this.removeLeft = true,
     this.removeTop = true,
     this.removeRight = true,
+    this.controller,
   }) : separatorBuilder = null;
 
   const NoPaddingListView.separated({
@@ -31,6 +33,7 @@ class NoPaddingListView extends StatelessWidget {
     this.removeLeft = true,
     this.removeTop = true,
     this.removeRight = true,
+    this.controller,
   });
 
   @override
@@ -51,10 +54,12 @@ class NoPaddingListView extends StatelessWidget {
           itemCount: itemCount,
           separatorBuilder: separatorBuilder!,
           scrollDirection: scrollDirection ?? Axis.vertical,
+          controller: controller,
         )
       : ListView.builder(
           itemBuilder: itemBuilder,
           itemCount: itemCount,
           scrollDirection: scrollDirection ?? Axis.vertical,
+          controller: controller,
         );
 }

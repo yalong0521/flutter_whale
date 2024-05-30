@@ -7,6 +7,17 @@ extension IterbleExt<E> on Iterable<E> {
   }
 }
 
+extension ListExt<E> on List<E?> {
+  List<E> removeNullValue() {
+    removeWhere((e) => e == null);
+    final noneNullList = <E>[];
+    for (var value in this) {
+      if (value != null) noneNullList.add(value);
+    }
+    return noneNullList;
+  }
+}
+
 extension NullableIterbleExt<E> on Iterable<E>? {
   bool get nullOrEmpty => this == null || this!.isEmpty;
 
