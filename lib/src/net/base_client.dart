@@ -163,6 +163,7 @@ abstract class BaseClient {
   Future<BaseResponse<T>> put<T>(
     String path, {
     data,
+    Map<String, dynamic>? parameters,
     T Function(dynamic data)? parser,
     bool original = false,
     Options? options,
@@ -180,6 +181,7 @@ abstract class BaseClient {
       showLoading,
       original,
       data: data,
+      parameters: parameters,
       parser: parser,
       options: options,
       cancelToken: cancelToken,
@@ -194,6 +196,7 @@ abstract class BaseClient {
   Future<BaseResponse<T>> delete<T>(
     String path, {
     data,
+    Map<String, dynamic>? parameters,
     T Function(dynamic data)? parser,
     bool original = false,
     Options? options,
@@ -209,6 +212,7 @@ abstract class BaseClient {
       'DELETE',
       path,
       data: data,
+      parameters: parameters,
       showLoading,
       original,
       parser: parser,
