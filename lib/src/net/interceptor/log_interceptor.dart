@@ -11,17 +11,15 @@ class LogsInterceptor extends Interceptor {
       if (value.value == null) options.headers[value.key] = '';
     }
     LogUtil.log('请求头: ${jsonEncode(options.headers)}');
-    if (options.method == 'POST') {
-      if (options.data != null) {
-        if (options.data is FormData) {
-          final formData = options.data as FormData;
-          LogUtil.log('请求体(FormData@fields): ${formData.fields.toString()}');
-          mapper(e) => MapEntry(e.key, e.value.filename);
-          var map = formData.files.map(mapper);
-          LogUtil.log('请求体(FormData@files): ${map.toString()}');
-        } else {
-          LogUtil.log('请求体: ${jsonEncode(options.data)}');
-        }
+    if (options.data != null) {
+      if (options.data is FormData) {
+        final formData = options.data as FormData;
+        LogUtil.log('请求体(FormData@fields): ${formData.fields.toString()}');
+        mapper(e) => MapEntry(e.key, e.value.filename);
+        var map = formData.files.map(mapper);
+        LogUtil.log('请求体(FormData@files): ${map.toString()}');
+      } else {
+        LogUtil.log('请求体: ${jsonEncode(options.data)}');
       }
     }
     return super.onRequest(options, handler);
