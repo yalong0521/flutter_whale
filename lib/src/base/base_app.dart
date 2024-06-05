@@ -15,8 +15,9 @@ AppConfig get appConfig => Provider.of<AppConfig>(baseContext, listen: false);
 final GlobalKey<NavigatorState> _baseKey = GlobalKey<NavigatorState>();
 
 class AppConfig extends ChangeNotifier {
-  String logTag;
+  String? logTag;
   ToastConfig? toastConfig;
+  double? appTextDefaultSize;
   TransitionType pageTransitionType;
   TransitionType dialogTransitionType;
   DpConverter dpConverter;
@@ -24,30 +25,116 @@ class AppConfig extends ChangeNotifier {
   LoadingConfig loadingConfig;
 
   AppConfig({
-    this.logTag = '基础组件',
+    this.logTag,
     this.toastConfig,
-    this.pageTransitionType = TransitionType.theme,
-    this.dialogTransitionType = TransitionType.fade,
+    this.appTextDefaultSize,
+    TransitionType? pageTransitionType,
+    TransitionType? dialogTransitionType,
     DpConverter? dpConverter,
     SpConverter? spConverter,
     LoadingConfig? loadingConfig,
-  })  : dpConverter = dpConverter ?? ((dp) => dp.toDouble()),
+  })  : pageTransitionType = TransitionType.theme,
+        dialogTransitionType = TransitionType.fade,
+        dpConverter = dpConverter ?? ((dp) => dp.toDouble()),
         spConverter = spConverter ?? ((sp) => sp.toDouble()),
         loadingConfig = loadingConfig ??
             LoadingConfig(builder: (text) => DefaultLoadingDialog(text));
+
+  void updata({
+    String? newTag,
+    ToastConfig? newConfig,
+    double? newSize,
+    TransitionType? newPageType,
+    TransitionType? newDialogType,
+    DpConverter? newDpConverter,
+    SpConverter? newSpConverter,
+    LoadingConfig? newLoadingConfig,
+  }) {
+    if (newTag != logTag) logTag = newTag;
+    if (newConfig != toastConfig) toastConfig = newConfig;
+    if (newSize != appTextDefaultSize) {
+      appTextDefaultSize = newSize;
+      notifyListeners();
+    }
+    if (newPageType != pageTransitionType) {
+      pageTransitionType = newPageType ?? TransitionType.theme;
+    }
+    if (newDialogType != dialogTransitionType) {
+      dialogTransitionType = newDialogType ?? TransitionType.fade;
+    }
+    if (newDpConverter != dpConverter) {
+      dpConverter = newDpConverter ?? ((dp) => dp.toDouble());
+    }
+    if (newSpConverter != spConverter) {
+      spConverter = newSpConverter ?? ((sp) => sp.toDouble());
+    }
+    if (newLoadingConfig != loadingConfig) {
+      loadingConfig = newLoadingConfig ??
+          LoadingConfig(builder: (text) => DefaultLoadingDialog(text));
+    }
+  }
 }
 
-class BaseApp extends StatelessWidget {
-  final AppConfig? appConfig;
+class BaseApp extends StatefulWidget {
   final BaseWidgetBuilder builder;
+  final String? logTag;
+  final ToastConfig? toastConfig;
+  final double? appTextDefaultSize;
+  final TransitionType? pageTransitionType;
+  final TransitionType? dialogTransitionType;
+  final DpConverter dpConverter;
+  final SpConverter spConverter;
+  final LoadingConfig loadingConfig;
 
-  const BaseApp({super.key, this.appConfig, required this.builder});
+  const BaseApp({
+    super.key,
+    required this.builder,
+    this.logTag,
+    this.toastConfig,
+    this.appTextDefaultSize,
+    this.pageTransitionType,
+    this.dialogTransitionType,
+    required this.dpConverter,
+    required this.spConverter,
+    required this.loadingConfig,
+  });
+
+  @override
+  State<StatefulWidget> createState() => _BaseAppState();
+}
+
+class _BaseAppState extends State<BaseApp> {
+  late final AppConfig _appConfig = AppConfig(
+    logTag: widget.logTag,
+    toastConfig: widget.toastConfig,
+    appTextDefaultSize: widget.appTextDefaultSize,
+    pageTransitionType: widget.pageTransitionType,
+    dialogTransitionType: widget.dialogTransitionType,
+    dpConverter: widget.dpConverter,
+    spConverter: widget.spConverter,
+    loadingConfig: widget.loadingConfig,
+  );
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AppConfig>(
-      create: (BuildContext context) => appConfig ?? AppConfig(),
-      child: builder(context, _baseKey),
+      create: (BuildContext context) => _appConfig,
+      child: widget.builder(context, _baseKey),
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant BaseApp oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _appConfig.updata(
+      newTag: widget.logTag,
+      newConfig: widget.toastConfig,
+      newSize: widget.appTextDefaultSize,
+      newPageType: widget.pageTransitionType,
+      newDialogType: widget.dialogTransitionType,
+      newDpConverter: widget.dpConverter,
+      newSpConverter: widget.spConverter,
+      newLoadingConfig: widget.loadingConfig,
     );
   }
 }

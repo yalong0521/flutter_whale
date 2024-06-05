@@ -1,9 +1,9 @@
-import 'package:flutter_whale/flutter_whale.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_whale/flutter_whale.dart';
 
 class AppText extends StatelessWidget {
   final String data;
-  final double size;
+  final double? size;
   final dynamic color;
   final FontWeight? weight;
   final TextOverflow? overflow;
@@ -14,7 +14,7 @@ class AppText extends StatelessWidget {
 
   const AppText(
     this.data, {
-    this.size = 18,
+    this.size,
     this.color = Colors.black,
     this.weight,
     this.overflow,
@@ -38,7 +38,7 @@ class AppText extends StatelessWidget {
       maxLines: maxLines,
       textAlign: textAlign,
       style: TextStyle(
-        fontSize: size,
+        fontSize: size ?? appConfig.appTextDefaultSize ?? 18,
         color: typeColor,
         fontWeight: weight,
         height: height,

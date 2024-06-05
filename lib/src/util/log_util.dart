@@ -8,6 +8,9 @@ class LogUtil {
 
   static void log(Object? object, {String? name}) {
     if (!kDebugMode) return;
-    developer.log(object?.toString() ?? '', name: name ?? appConfig.logTag);
+    developer.log(
+      object?.toString() ?? '',
+      name: name ?? appConfig.logTag ?? '基础组件',
+    );
   }
 }
