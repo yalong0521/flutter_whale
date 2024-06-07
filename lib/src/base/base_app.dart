@@ -23,7 +23,6 @@ class AppConfig extends ChangeNotifier {
   DpConverter dpConverter;
   SpConverter spConverter;
   LoadingConfig loadingConfig;
-  ScreenValueGetter screenValueGetter;
 
   AppConfig({
     this.logTag,
@@ -34,7 +33,6 @@ class AppConfig extends ChangeNotifier {
     DpConverter? dpConverter,
     SpConverter? spConverter,
     LoadingConfig? loadingConfig,
-    required this.screenValueGetter,
   })  : pageTransitionType = TransitionType.theme,
         dialogTransitionType = TransitionType.fade,
         dpConverter = dpConverter ?? ((dp) => dp.toDouble()),
@@ -77,16 +75,6 @@ class AppConfig extends ChangeNotifier {
   }
 }
 
-mixin ScreenValueGetter {
-  double get screenWidth;
-
-  double get screenHeight;
-
-  double get bottomBarHeight;
-
-  double get statusBarHeight;
-}
-
 class BaseApp extends StatefulWidget {
   final BaseWidgetBuilder builder;
   final String? logTag;
@@ -97,7 +85,6 @@ class BaseApp extends StatefulWidget {
   final DpConverter dpConverter;
   final SpConverter spConverter;
   final LoadingConfig loadingConfig;
-  final ScreenValueGetter screenValueGetter;
 
   const BaseApp({
     super.key,
@@ -110,7 +97,6 @@ class BaseApp extends StatefulWidget {
     required this.dpConverter,
     required this.spConverter,
     required this.loadingConfig,
-    required this.screenValueGetter,
   });
 
   @override
@@ -127,7 +113,6 @@ class _BaseAppState extends State<BaseApp> {
     dpConverter: widget.dpConverter,
     spConverter: widget.spConverter,
     loadingConfig: widget.loadingConfig,
-    screenValueGetter: widget.screenValueGetter,
   );
 
   @override

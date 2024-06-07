@@ -1,3 +1,3 @@
-## 1.0.6
-1.screenValueGetter
+## 1.0.5
+1.appConfig优化
 
