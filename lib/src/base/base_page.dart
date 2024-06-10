@@ -47,7 +47,7 @@ abstract class BasePage<M extends BaseModel> extends StatefulWidget {
       ChangeNotifierProvider(create: createModel, key: key, child: this);
 }
 
-abstract class BaseState<E extends BasePage, T extends BaseModel<E>>
+abstract class BaseState<E extends BasePage, T extends BaseModel>
     extends State<E> {
   T get model => Provider.of<T>(context, listen: false);
 

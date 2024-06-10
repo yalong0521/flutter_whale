@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-abstract class BaseModel<T extends StatefulWidget> extends ChangeNotifier {
+abstract class BaseModel extends ChangeNotifier {
   BuildContext context;
   bool disposed = false;
 
