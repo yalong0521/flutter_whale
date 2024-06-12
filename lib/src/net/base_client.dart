@@ -275,11 +275,16 @@ abstract class BaseClient {
       },
     );
     if (response.statusCode == 200) {
-      if (original) {
-        // 不解析，返回原始数据
-        return BaseResponse(success: true, data: parser(response.data));
+      try {
+        if (original) {
+          // 不解析，返回原始数据
+          return BaseResponse(success: true, data: parser(response.data));
+        }
+        return responseWrapper(response.data, parser, extra);
+      } on TypeError catch (e) {
+        LogUtil.log('${e.toString()}\n${e.stackTrace}');
+        return BaseResponse(success: false, errorMsg: '数据解析异常');
       }
-      return responseWrapper(response.data, parser, extra);
     } else {
       return BaseResponse(success: false, errorMsg: response.statusMessage);
     }

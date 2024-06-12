@@ -47,9 +47,9 @@ abstract class BasePage<M extends BaseModel> extends StatefulWidget {
       ChangeNotifierProvider(create: createModel, key: key, child: this);
 }
 
-abstract class BaseState<E extends BasePage, T extends BaseModel>
-    extends State<E> {
-  T get model => Provider.of<T>(context, listen: false);
+abstract class BaseState<P extends BasePage, M extends BaseModel>
+    extends State<P> {
+  M get model => Provider.of<M>(context, listen: false);
 
   @override
   void initState() {
@@ -57,5 +57,11 @@ abstract class BaseState<E extends BasePage, T extends BaseModel>
       if (mounted) model.init();
     });
     super.initState();
+  }
+
+  Selector<M, D> selector<D>(
+      {required D Function(BuildContext, M) selector,
+      required ValueWidgetBuilder<D> builder}) {
+    return Selector<M, D>(selector: selector, builder: builder);
   }
 }
