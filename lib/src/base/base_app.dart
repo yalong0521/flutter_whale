@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_whale/flutter_whale.dart';
 
-typedef DpConverter = double Function(num dp);
-
-typedef SpConverter = double Function(num sp);
+typedef SizeConverter = double Function(num size);
 
 typedef BaseWidgetBuilder = Widget Function(
     BuildContext context, GlobalKey<NavigatorState> baseKey);
@@ -15,39 +13,34 @@ AppConfig get appConfig => Provider.of<AppConfig>(baseContext, listen: false);
 final GlobalKey<NavigatorState> _baseKey = GlobalKey<NavigatorState>();
 
 class AppConfig extends ChangeNotifier {
-  String? logTag;
   ToastConfig? toastConfig;
-  double? appTextDefaultSize;
+  double appTextDefaultSize;
+  String logTag;
   TransitionType pageTransitionType;
   TransitionType dialogTransitionType;
-  DpConverter dpConverter;
-  SpConverter spConverter;
+  SizeConverter dpConverter;
+  SizeConverter spConverter;
   LoadingConfig loadingConfig;
 
   AppConfig({
-    this.logTag,
     this.toastConfig,
-    this.appTextDefaultSize,
-    TransitionType? pageTransitionType,
-    TransitionType? dialogTransitionType,
-    DpConverter? dpConverter,
-    SpConverter? spConverter,
-    LoadingConfig? loadingConfig,
-  })  : pageTransitionType = TransitionType.theme,
-        dialogTransitionType = TransitionType.fade,
-        dpConverter = dpConverter ?? ((dp) => dp.toDouble()),
-        spConverter = spConverter ?? ((sp) => sp.toDouble()),
-        loadingConfig = loadingConfig ??
-            LoadingConfig(builder: (text) => DefaultLoadingDialog(text));
+    required this.appTextDefaultSize,
+    required this.logTag,
+    required this.pageTransitionType,
+    required this.dialogTransitionType,
+    required this.dpConverter,
+    required this.spConverter,
+    required this.loadingConfig,
+  });
 
   void updata({
-    String? newTag,
+    String newTag = '基础组件',
     ToastConfig? newConfig,
-    double? newSize,
+    double newSize = 18,
     TransitionType? newPageType,
     TransitionType? newDialogType,
-    DpConverter? newDpConverter,
-    SpConverter? newSpConverter,
+    SizeConverter? newDpConverter,
+    SizeConverter? newSpConverter,
     LoadingConfig? newLoadingConfig,
   }) {
     if (newTag != logTag) logTag = newTag;
@@ -75,29 +68,34 @@ class AppConfig extends ChangeNotifier {
   }
 }
 
+double Function(num value) _defaultConverter = (num value) => value.toDouble();
+
 class BaseApp extends StatefulWidget {
   final BaseWidgetBuilder builder;
-  final String? logTag;
+  final String logTag;
   final ToastConfig? toastConfig;
-  final double? appTextDefaultSize;
-  final TransitionType? pageTransitionType;
-  final TransitionType? dialogTransitionType;
-  final DpConverter dpConverter;
-  final SpConverter spConverter;
+  final double appTextDefaultSize;
+  final TransitionType pageTransitionType;
+  final TransitionType dialogTransitionType;
+  final SizeConverter dpConverter;
+  final SizeConverter spConverter;
   final LoadingConfig loadingConfig;
 
-  const BaseApp({
+  BaseApp({
     super.key,
     required this.builder,
-    this.logTag,
+    this.logTag = '基础组件',
     this.toastConfig,
-    this.appTextDefaultSize,
-    this.pageTransitionType,
-    this.dialogTransitionType,
-    required this.dpConverter,
-    required this.spConverter,
-    required this.loadingConfig,
-  });
+    this.appTextDefaultSize = 18,
+    this.pageTransitionType = TransitionType.theme,
+    this.dialogTransitionType = TransitionType.fade,
+    SizeConverter? dpConverter,
+    SizeConverter? spConverter,
+    LoadingConfig? loadingConfig,
+  })  : dpConverter = dpConverter ?? _defaultConverter,
+        spConverter = spConverter ?? _defaultConverter,
+        loadingConfig =
+            LoadingConfig(builder: (text) => DefaultLoadingDialog(text));
 
   @override
   State<StatefulWidget> createState() => _BaseAppState();

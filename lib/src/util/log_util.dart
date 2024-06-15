@@ -10,7 +10,7 @@ class LogUtil {
     if (!kDebugMode) return;
     developer.log(
       object?.toString() ?? '',
-      name: name ?? appConfig.logTag ?? '基础组件',
+      name: name ?? appConfig.logTag,
     );
   }
 }
