@@ -10,6 +10,7 @@ export 'src/ext/func_ext.dart';
 export 'src/ext/future_ext.dart';
 export 'src/ext/iterable_ext.dart';
 export 'src/ext/map_ext.dart';
+export 'src/ext/num_ext.dart';
 export 'src/ext/string_ext.dart';
 export 'src/ext/ui_ext.dart';
 export 'src/net/base_client.dart';
