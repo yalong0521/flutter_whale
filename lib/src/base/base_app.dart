@@ -70,6 +70,9 @@ class AppConfig extends ChangeNotifier {
 
 double Function(num value) _defaultConverter = (num value) => value.toDouble();
 
+LoadingConfig _defaultLoadingConfig =
+    LoadingConfig(builder: (text) => DefaultLoadingDialog(text));
+
 class BaseApp extends StatefulWidget {
   final BaseWidgetBuilder builder;
   final String logTag;
@@ -94,8 +97,7 @@ class BaseApp extends StatefulWidget {
     LoadingConfig? loadingConfig,
   })  : dpConverter = dpConverter ?? _defaultConverter,
         spConverter = spConverter ?? _defaultConverter,
-        loadingConfig =
-            LoadingConfig(builder: (text) => DefaultLoadingDialog(text));
+        loadingConfig = loadingConfig ?? _defaultLoadingConfig;
 
   @override
   State<StatefulWidget> createState() => _BaseAppState();
