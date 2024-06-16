@@ -13,7 +13,7 @@ class _LoadingOverlay {
 class DialogUtil {
   DialogUtil._();
 
-  static Map<BuildContext, _LoadingOverlay> _loadingOverlayMap = {};
+  static final Map<BuildContext, _LoadingOverlay> _loadingOverlayMap = {};
 
   static void showLoading({
     String? text,
@@ -133,21 +133,21 @@ class _DefaultLoadingDialogWidget extends StatelessWidget {
   Widget _body() {
     return Container(
       padding: text == null
-          ? EdgeInsets.all(20.dp)
-          : EdgeInsets.symmetric(vertical: 20.dp, horizontal: 40.dp),
+          ? EdgeInsets.all(20.aw)
+          : EdgeInsets.symmetric(vertical: 20.aw, horizontal: 40.aw),
       decoration: BoxDecoration(
         color: Colors.black54,
-        borderRadius: BorderRadius.circular(8.dp),
+        borderRadius: BorderRadius.circular(8.aw),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CupertinoActivityIndicator(color: Colors.white, radius: 12.dp),
+          CupertinoActivityIndicator(color: Colors.white, radius: 12.aw),
           if (text != null) ...[
-            VSpacer(15.dp),
+            VSpacer(15.aw),
             Text(
               text!,
-              style: TextStyle(fontSize: 14.sp, color: Colors.white70),
+              style: TextStyle(fontSize: 14.asp, color: Colors.white70),
             ),
           ]
         ],

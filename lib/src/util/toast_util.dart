@@ -130,13 +130,13 @@ class ToastUtil {
     if (builder != null) return builder;
     return (text) {
       return Container(
-        margin: EdgeInsets.symmetric(horizontal: 15.dp, vertical: 50.dp),
-        padding: EdgeInsets.symmetric(horizontal: 12.dp, vertical: 8.dp),
+        margin: EdgeInsets.symmetric(horizontal: 15.aw, vertical: 50.aw),
+        padding: EdgeInsets.symmetric(horizontal: 12.aw, vertical: 8.aw),
         decoration: BoxDecoration(
           color: Colors.black.withOpacity(0.7),
-          borderRadius: BorderRadius.circular(8.dp),
+          borderRadius: BorderRadius.circular(8.aw),
         ),
-        child: AppText(text, size: 14.sp, color: Colors.white),
+        child: AppText(text, size: 14.asp, color: Colors.white),
       );
     };
   }
