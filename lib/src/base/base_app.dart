@@ -18,8 +18,9 @@ class AppConfig extends ChangeNotifier {
   String logTag;
   TransitionType pageTransitionType;
   TransitionType dialogTransitionType;
-  SizeConverter dpConverter;
-  SizeConverter spConverter;
+  SizeConverter awConverter;
+  SizeConverter ahConverter;
+  SizeConverter aspConverter;
   LoadingConfig loadingConfig;
 
   AppConfig({
@@ -28,8 +29,9 @@ class AppConfig extends ChangeNotifier {
     required this.logTag,
     required this.pageTransitionType,
     required this.dialogTransitionType,
-    required this.dpConverter,
-    required this.spConverter,
+    required this.awConverter,
+    required this.ahConverter,
+    required this.aspConverter,
     required this.loadingConfig,
   });
 
@@ -39,8 +41,9 @@ class AppConfig extends ChangeNotifier {
     double newSize = 18,
     TransitionType? newPageType,
     TransitionType? newDialogType,
-    SizeConverter? newDpConverter,
-    SizeConverter? newSpConverter,
+    SizeConverter? newAwConverter,
+    SizeConverter? newAhConverter,
+    SizeConverter? newAspConverter,
     LoadingConfig? newLoadingConfig,
   }) {
     if (newTag != logTag) logTag = newTag;
@@ -55,11 +58,14 @@ class AppConfig extends ChangeNotifier {
     if (newDialogType != dialogTransitionType) {
       dialogTransitionType = newDialogType ?? TransitionType.fade;
     }
-    if (newDpConverter != dpConverter) {
-      dpConverter = newDpConverter ?? ((dp) => dp.toDouble());
+    if (newAwConverter != awConverter) {
+      awConverter = newAwConverter ?? _defaultConverter;
     }
-    if (newSpConverter != spConverter) {
-      spConverter = newSpConverter ?? ((sp) => sp.toDouble());
+    if (newAhConverter != ahConverter) {
+      ahConverter = newAhConverter ?? _defaultConverter;
+    }
+    if (newAspConverter != aspConverter) {
+      aspConverter = newAspConverter ?? _defaultConverter;
     }
     if (newLoadingConfig != loadingConfig) {
       loadingConfig = newLoadingConfig ??
@@ -80,8 +86,9 @@ class BaseApp extends StatefulWidget {
   final double appTextDefaultSize;
   final TransitionType pageTransitionType;
   final TransitionType dialogTransitionType;
-  final SizeConverter dpConverter;
-  final SizeConverter spConverter;
+  final SizeConverter awConverter;
+  final SizeConverter ahConverter;
+  final SizeConverter aspConverter;
   final LoadingConfig loadingConfig;
 
   BaseApp({
@@ -92,11 +99,13 @@ class BaseApp extends StatefulWidget {
     this.appTextDefaultSize = 18,
     this.pageTransitionType = TransitionType.theme,
     this.dialogTransitionType = TransitionType.fade,
-    SizeConverter? dpConverter,
-    SizeConverter? spConverter,
+    SizeConverter? awConverter,
+    SizeConverter? ahConverter,
+    SizeConverter? aspConverter,
     LoadingConfig? loadingConfig,
-  })  : dpConverter = dpConverter ?? _defaultConverter,
-        spConverter = spConverter ?? _defaultConverter,
+  })  : awConverter = awConverter ?? _defaultConverter,
+        ahConverter = ahConverter ?? _defaultConverter,
+        aspConverter = aspConverter ?? _defaultConverter,
         loadingConfig = loadingConfig ?? _defaultLoadingConfig;
 
   @override
@@ -110,8 +119,9 @@ class _BaseAppState extends State<BaseApp> {
     appTextDefaultSize: widget.appTextDefaultSize,
     pageTransitionType: widget.pageTransitionType,
     dialogTransitionType: widget.dialogTransitionType,
-    dpConverter: widget.dpConverter,
-    spConverter: widget.spConverter,
+    awConverter: widget.awConverter,
+    ahConverter: widget.ahConverter,
+    aspConverter: widget.aspConverter,
     loadingConfig: widget.loadingConfig,
   );
 
@@ -132,8 +142,9 @@ class _BaseAppState extends State<BaseApp> {
       newSize: widget.appTextDefaultSize,
       newPageType: widget.pageTransitionType,
       newDialogType: widget.dialogTransitionType,
-      newDpConverter: widget.dpConverter,
-      newSpConverter: widget.spConverter,
+      newAwConverter: widget.awConverter,
+      newAhConverter: widget.ahConverter,
+      newAspConverter: widget.aspConverter,
       newLoadingConfig: widget.loadingConfig,
     );
   }
