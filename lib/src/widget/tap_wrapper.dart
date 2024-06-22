@@ -19,6 +19,7 @@ class TapWrapper extends StatefulWidget {
   final double? pressedOpacity;
   final TapBehavior behavior;
   final int? milliseconds;
+  final bool enable;
 
   const TapWrapper({
     super.key,
@@ -28,6 +29,7 @@ class TapWrapper extends StatefulWidget {
     this.pressedOpacity,
     this.behavior = TapBehavior.none,
     this.milliseconds,
+    this.enable = true,
   });
 
   @override
@@ -46,15 +48,23 @@ class _TapWrapperState extends State<TapWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => _onTap(),
-      onLongPress: widget.onLongPress,
-      onTapDown: (details) => notifyOpacityChanged(true),
-      onTapUp: (details) => notifyOpacityChanged(false),
-      onTapCancel: () => notifyOpacityChanged(false),
-      child: Opacity(opacity: _pressOpacity, child: widget.child),
+    Widget child = MouseRegion(
+      cursor: widget.enable
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.forbidden,
+      child: widget.child,
     );
+    return widget.enable
+        ? GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => _onTap(),
+            onLongPress: widget.onLongPress,
+            onTapDown: (details) => notifyOpacityChanged(true),
+            onTapUp: (details) => notifyOpacityChanged(false),
+            onTapCancel: () => notifyOpacityChanged(false),
+            child: Opacity(opacity: _pressOpacity, child: child),
+          )
+        : Opacity(opacity: 0.5, child: child);
   }
 
   void notifyOpacityChanged(bool pressed) {
