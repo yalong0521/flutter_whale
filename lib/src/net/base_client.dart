@@ -76,7 +76,7 @@ abstract class BaseClient {
       case DioExceptionType.connectionTimeout:
         return '连接超时';
       case DioExceptionType.connectionError:
-        return '网络异常';
+        return '连接异常';
       case DioExceptionType.sendTimeout:
         return '请求超时';
       case DioExceptionType.receiveTimeout:

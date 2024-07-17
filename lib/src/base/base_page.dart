@@ -61,7 +61,12 @@ abstract class BaseState<P extends BasePage, M extends BaseModel>
 
   Selector<M, D> selector<D>(
       {required D Function(BuildContext, M) selector,
-      required ValueWidgetBuilder<D> builder}) {
-    return Selector<M, D>(selector: selector, builder: builder);
+      required ValueWidgetBuilder<D> builder,
+      ShouldRebuild<D>? shouldRebuild}) {
+    return Selector<M, D>(
+      selector: selector,
+      builder: builder,
+      shouldRebuild: shouldRebuild,
+    );
   }
 }

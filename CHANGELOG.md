@@ -1,3 +1,3 @@
-## 1.1.1+1
-1.tap_wrapper adapt desktop cursor;
-2.tap_wrapper add enable field;
+# 1.1.2
+
+## 日志输出到文件

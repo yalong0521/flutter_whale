@@ -16,6 +16,7 @@ class AppConfig extends ChangeNotifier {
   ToastConfig? toastConfig;
   double appTextDefaultSize;
   String logTag;
+  bool log2File;
   TransitionType pageTransitionType;
   TransitionType dialogTransitionType;
   SizeConverter awConverter;
@@ -27,6 +28,7 @@ class AppConfig extends ChangeNotifier {
     this.toastConfig,
     required this.appTextDefaultSize,
     required this.logTag,
+    required this.log2File,
     required this.pageTransitionType,
     required this.dialogTransitionType,
     required this.awConverter,
@@ -37,6 +39,7 @@ class AppConfig extends ChangeNotifier {
 
   void updata({
     String newTag = '基础组件',
+    bool? newLog2File,
     ToastConfig? newConfig,
     double newSize = 18,
     TransitionType? newPageType,
@@ -47,6 +50,7 @@ class AppConfig extends ChangeNotifier {
     LoadingConfig? newLoadingConfig,
   }) {
     if (newTag != logTag) logTag = newTag;
+    if (newLog2File != null) log2File = newLog2File;
     if (newConfig != toastConfig) toastConfig = newConfig;
     if (newSize != appTextDefaultSize) {
       appTextDefaultSize = newSize;
@@ -82,6 +86,7 @@ LoadingConfig _defaultLoadingConfig =
 class BaseApp extends StatefulWidget {
   final BaseWidgetBuilder builder;
   final String logTag;
+  final bool log2File;
   final ToastConfig? toastConfig;
   final double appTextDefaultSize;
   final TransitionType pageTransitionType;
@@ -95,6 +100,7 @@ class BaseApp extends StatefulWidget {
     super.key,
     required this.builder,
     this.logTag = '基础组件',
+    this.log2File = false,
     this.toastConfig,
     this.appTextDefaultSize = 18,
     this.pageTransitionType = TransitionType.theme,
@@ -115,6 +121,7 @@ class BaseApp extends StatefulWidget {
 class _BaseAppState extends State<BaseApp> {
   late final AppConfig _appConfig = AppConfig(
     logTag: widget.logTag,
+    log2File: widget.log2File,
     toastConfig: widget.toastConfig,
     appTextDefaultSize: widget.appTextDefaultSize,
     pageTransitionType: widget.pageTransitionType,
@@ -138,6 +145,7 @@ class _BaseAppState extends State<BaseApp> {
     super.didUpdateWidget(oldWidget);
     _appConfig.updata(
       newTag: widget.logTag,
+      newLog2File: widget.log2File,
       newConfig: widget.toastConfig,
       newSize: widget.appTextDefaultSize,
       newPageType: widget.pageTransitionType,
