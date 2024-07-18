@@ -29,8 +29,8 @@ class LogUtil {
     } else {
       log = object.toString();
     }
-    var tag = name ?? appConfig.logTag;
-    if (kDebugMode) developer.log(log, name: '$tag ${level.name}');
+    var tag = '${name ?? appConfig.logTag} ${level.name}';
+    if (kDebugMode) developer.log(log, name: tag);
     if (appConfig.log2File) _log2File(tag, log);
   }
 
