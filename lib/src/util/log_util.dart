@@ -5,17 +5,40 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_whale/flutter_whale.dart';
 import 'package:path/path.dart';
 
+enum LogLevel {
+  info,
+  error;
+}
+
 class LogUtil {
   LogUtil._();
 
-  static void log(Object? object, {String? name}) {
-    var log = object?.toString() ?? '';
+  static void log(Object? object,
+      {String? name, LogLevel level = LogLevel.info}) {
+    if (object == null) return;
+    String log;
+    if (object is List) {
+      StringBuffer sb = StringBuffer();
+      for (var value in object) {
+        sb.write(value.toString());
+        if (object.indexOf(value) != object.length - 1) {
+          sb.write(Platform.lineTerminator);
+        }
+      }
+      log = sb.toString();
+    } else {
+      log = object.toString();
+    }
     var tag = name ?? appConfig.logTag;
-    if (kDebugMode) developer.log(log, name: tag);
-    if (appConfig.log2File) log2File(tag, log);
+    if (kDebugMode) developer.log(log, name: '$tag ${level.name}');
+    if (appConfig.log2File) _log2File(tag, log);
   }
 
-  static void log2File(String tag, String log) async {
+  static void logE(Object? object, {String? name}) {
+    log(object, name: name, level: LogLevel.error);
+  }
+
+  static void _log2File(String tag, String log) async {
     var logDir = await getLogDir();
     var dateTime = DateTime.now();
     var logFileName = formatDate(dateTime, [yyyy, mm, dd, HH]);

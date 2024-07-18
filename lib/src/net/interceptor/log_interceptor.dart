@@ -4,43 +4,59 @@ import 'package:flutter_whale/flutter_whale.dart';
 
 /// Log 拦截器
 class LogsInterceptor extends Interceptor {
+  final Map<RequestOptions, List<String>> _logs = {};
+
   @override
   onRequest(RequestOptions options, handler) async {
-    LogUtil.log('请求地址: ${options.uri.toString()} (${options.method})');
+    List<String> logList = [];
+    logList.add('');
+    logList.add('HttpRequestStart${'=' * 120}>>');
+    logList.add('请求地址: ${options.uri.toString()} (${options.method})');
     for (var value in options.headers.entries) {
       if (value.value == null) options.headers[value.key] = '';
     }
-    LogUtil.log('请求头: ${jsonEncode(options.headers)}');
+    logList.add('请求头: ${jsonEncode(options.headers)}');
     if (options.data != null) {
       if (options.data is FormData) {
         final formData = options.data as FormData;
-        LogUtil.log('请求体(FormData@fields): ${formData.fields.toString()}');
+        logList.add('请求体(FormData@fields): ${formData.fields.toString()}');
         mapper(e) => MapEntry(e.key, e.value.filename);
         var map = formData.files.map(mapper);
-        LogUtil.log('请求体(FormData@files): ${map.toString()}');
+        logList.add('请求体(FormData@files): ${map.toString()}');
       } else {
-        LogUtil.log('请求体: ${jsonEncode(options.data)}');
+        logList.add('请求体: ${jsonEncode(options.data)}');
       }
     }
+    _logs[options] = logList;
     return super.onRequest(options, handler);
   }
 
   @override
   onResponse(Response response, handler) async {
+    var options = response.requestOptions;
+    List<String>? logList = _logs[options];
     var responseType = response.requestOptions.responseType;
     if (responseType == ResponseType.json) {
-      LogUtil.log('返回数据: ${jsonEncode(response.data)}');
+      logList?.add('返回数据: ${jsonEncode(response.data)}');
     } else if (responseType == ResponseType.plain) {
-      LogUtil.log('返回数据: ${response.data}');
+      logList?.add('返回数据: ${response.data}');
     } else {
-      LogUtil.log('返回数据: 暂不支持打印(${response.data.runtimeType})');
+      logList?.add('返回数据: 暂不支持打印(${response.data.runtimeType})');
     }
+    logList?.add('HttpRequestEnd<<${'=' * 120}');
+    LogUtil.log(logList);
+    _logs.remove(options);
     return super.onResponse(response, handler);
   }
 
   @override
   onError(err, handler) async {
-    LogUtil.log('请求异常: DioError [${err.type}] Response [${err.response}]');
+    var options = err.requestOptions;
+    List<String>? logList = _logs[options];
+    logList?.add('请求异常: DioError [${err.type}] Response [${err.response}]');
+    logList?.add('HttpRequestEnd<<${'=' * 120}');
+    LogUtil.logE(logList);
+    _logs.remove(options);
     return super.onError(err, handler);
   }
 }
