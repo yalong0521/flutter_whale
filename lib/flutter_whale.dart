@@ -1,6 +1,7 @@
 export 'package:dio/dio.dart';
 export 'package:path_provider/path_provider.dart';
 export 'package:provider/provider.dart';
+export 'package:synchronized/synchronized.dart';
 
 export 'src/base/base_app.dart';
 export 'src/base/base_model.dart';

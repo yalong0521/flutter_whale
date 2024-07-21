@@ -282,7 +282,8 @@ abstract class BaseClient {
         }
         return responseWrapper(response.data, parser, extra);
       } on TypeError catch (e) {
-        LogUtil.log('${e.toString()}\n${e.stackTrace}');
+        LogUtil.logE('${e.toString()}\n${e.stackTrace}',
+            path: kHttpClientLogPath);
         return BaseResponse(success: false, errorMsg: '数据解析异常');
       }
     } else {

@@ -15,7 +15,6 @@ final GlobalKey<NavigatorState> _baseKey = GlobalKey<NavigatorState>();
 class AppConfig extends ChangeNotifier {
   ToastConfig? toastConfig;
   double appTextDefaultSize;
-  String logTag;
   bool log2File;
   TransitionType pageTransitionType;
   TransitionType dialogTransitionType;
@@ -27,7 +26,6 @@ class AppConfig extends ChangeNotifier {
   AppConfig({
     this.toastConfig,
     required this.appTextDefaultSize,
-    required this.logTag,
     required this.log2File,
     required this.pageTransitionType,
     required this.dialogTransitionType,
@@ -37,8 +35,7 @@ class AppConfig extends ChangeNotifier {
     required this.loadingConfig,
   });
 
-  void updata({
-    String newTag = '基础组件',
+  void update({
     bool? newLog2File,
     ToastConfig? newConfig,
     double newSize = 18,
@@ -49,7 +46,6 @@ class AppConfig extends ChangeNotifier {
     SizeConverter? newAspConverter,
     LoadingConfig? newLoadingConfig,
   }) {
-    if (newTag != logTag) logTag = newTag;
     if (newLog2File != null) log2File = newLog2File;
     if (newConfig != toastConfig) toastConfig = newConfig;
     if (newSize != appTextDefaultSize) {
@@ -85,7 +81,6 @@ LoadingConfig _defaultLoadingConfig =
 
 class BaseApp extends StatefulWidget {
   final BaseWidgetBuilder builder;
-  final String logTag;
   final bool log2File;
   final ToastConfig? toastConfig;
   final double appTextDefaultSize;
@@ -99,7 +94,6 @@ class BaseApp extends StatefulWidget {
   BaseApp({
     super.key,
     required this.builder,
-    this.logTag = '基础组件',
     this.log2File = false,
     this.toastConfig,
     this.appTextDefaultSize = 18,
@@ -120,7 +114,6 @@ class BaseApp extends StatefulWidget {
 
 class _BaseAppState extends State<BaseApp> {
   late final AppConfig _appConfig = AppConfig(
-    logTag: widget.logTag,
     log2File: widget.log2File,
     toastConfig: widget.toastConfig,
     appTextDefaultSize: widget.appTextDefaultSize,
@@ -143,8 +136,7 @@ class _BaseAppState extends State<BaseApp> {
   @override
   void didUpdateWidget(covariant BaseApp oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _appConfig.updata(
-      newTag: widget.logTag,
+    _appConfig.update(
       newLog2File: widget.log2File,
       newConfig: widget.toastConfig,
       newSize: widget.appTextDefaultSize,

@@ -10,11 +10,16 @@ enum LogLevel {
   error;
 }
 
+const kDefaultPath = 'default';
+const kHttpClientLogPath = 'http';
+
 class LogUtil {
   LogUtil._();
 
+  static final _lock = Lock();
+
   static void log(Object? object,
-      {String? name, LogLevel level = LogLevel.info}) async {
+      {String path = kDefaultPath, LogLevel level = LogLevel.info}) async {
     if (object == null) return;
     String log;
     if (object is List) {
@@ -30,27 +35,26 @@ class LogUtil {
       log = object.toString();
     }
     var dateTime = DateTime.now();
-    var dateTimeStr = dateTime.toString();
-    var tag = '${name ?? appConfig.logTag} ${level.name} $dateTimeStr';
+    var tag = '$path ${level.name} $dateTime';
     if (kDebugMode) developer.log(log, name: tag);
     if (appConfig.log2File) {
-      var logLevelDir = await _getLogLevelDir(level);
-      var logFileName = formatDate(dateTime, [yyyy, mm, dd, HH]);
-      var logFile = File(join(logLevelDir.path, '${logFileName}00.log'));
-      logFile.writeAsString(
-        '[$tag] $log${Platform.lineTerminator}',
-        mode: FileMode.append,
-      );
+      _lock.synchronized(() => _log2File(path, level, dateTime, log));
     }
   }
 
-  static void logE(Object? object, {String? name}) {
-    log(object, name: name, level: LogLevel.error);
+  static Future _log2File(
+      String path, LogLevel level, DateTime dateTime, String log) async {
+    var logLevelDir = await _getLogPathLevelDir(path, level);
+    var logFileName = formatDate(dateTime, [yyyy, mm, dd, HH]);
+    var logFile = File(join(logLevelDir.path, '${logFileName}00.log'));
+    await logFile.writeAsString(
+      '[ $dateTime ] $log${Platform.lineTerminator * 2}',
+      mode: FileMode.append,
+    );
   }
 
-  static Future<List<File>> getLevelLogs(LogLevel level) async {
-    var logLevelDir = await _getLogLevelDir(level);
-    return logLevelDir.list().map((e) => File(e.path)).toList();
+  static void logE(Object? object, {String path = kDefaultPath}) {
+    log(object, path: path, level: LogLevel.error);
   }
 
   static Future<Directory> getLogRootDir() async {
@@ -59,16 +63,17 @@ class LogUtil {
       var externalStorageDir = await getExternalStorageDirectory();
       if (externalStorageDir != null) dir = externalStorageDir;
     }
-    dir = dir ?? await getTemporaryDirectory();
+    dir = dir ?? await getApplicationSupportDirectory();
     var logRootDir = Directory(join(dir.path, 'logs'));
     if (!logRootDir.existsSync()) logRootDir.createSync();
     return logRootDir;
   }
 
-  static Future<Directory> _getLogLevelDir(LogLevel level) async {
+  static Future<Directory> _getLogPathLevelDir(
+      String path, LogLevel level) async {
     var logRootDir = await getLogRootDir();
-    var logLevelDir = Directory(join(logRootDir.path, level.name));
-    if (!logLevelDir.existsSync()) logLevelDir.createSync();
-    return logLevelDir;
+    Directory logDir = Directory(join(logRootDir.path, path, level.name));
+    if (!logDir.existsSync()) logDir.createSync(recursive: true);
+    return logDir;
   }
 }

@@ -3,7 +3,6 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_whale/flutter_whale.dart';
-import 'package:flutter_whale/src/ext/num_ext.dart';
 
 class ToastUtil {
   ToastUtil._();

@@ -9,7 +9,6 @@ class LogsInterceptor extends Interceptor {
   @override
   onRequest(RequestOptions options, handler) async {
     List<String> logList = [];
-    logList.add('');
     logList.add('HttpRequestStart${'=' * 120}>>');
     logList.add('请求地址: ${options.uri.toString()} (${options.method})');
     for (var value in options.headers.entries) {
@@ -44,7 +43,7 @@ class LogsInterceptor extends Interceptor {
       logList?.add('返回数据: 暂不支持打印(${response.data.runtimeType})');
     }
     logList?.add('HttpRequestEnd<<${'=' * 120}');
-    LogUtil.log(logList);
+    LogUtil.log(logList, path: kHttpClientLogPath);
     _logs.remove(options);
     return super.onResponse(response, handler);
   }
@@ -53,10 +52,22 @@ class LogsInterceptor extends Interceptor {
   onError(err, handler) async {
     var options = err.requestOptions;
     List<String>? logList = _logs[options];
-    logList?.add('请求异常: DioError [${err.type}] Response [${err.response}]');
+    logList?.add('请求异常: ${_errorToString(err)}');
     logList?.add('HttpRequestEnd<<${'=' * 120}');
-    LogUtil.logE(logList);
+    LogUtil.logE(logList, path: kHttpClientLogPath);
     _logs.remove(options);
     return super.onError(err, handler);
+  }
+
+  String _errorToString(DioException err) {
+    Map<String, dynamic> json = {};
+    json['ExceptionType'] = err.type.toString();
+    var message = err.message;
+    if (message != null) json['ExceptionMessage'] = message.toString();
+    var error = err.error;
+    if (error != null) json['ExceptionError'] = error.toString();
+    var response = err.response;
+    if (response != null) json['ExceptionResponse'] = response.toString();
+    return jsonEncode(json);
   }
 }

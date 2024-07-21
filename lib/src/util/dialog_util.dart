@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_whale/flutter_whale.dart';
-import 'package:flutter_whale/src/ext/num_ext.dart';
 
 class _LoadingOverlay {
   final OverlayEntry entry;

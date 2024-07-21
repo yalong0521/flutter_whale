@@ -80,7 +80,7 @@ extension NullableStringExt on String? {
     if (colorStr.isNotEmpty) {
       return Color(int.parse(colorStr));
     }
-    LogUtil.log('颜色转换失败:不支持的色值格式：$this', name: '基础组件');
+    LogUtil.logE('颜色转换失败:不支持的色值格式：$this', path: kDefaultPath);
     return Colors.transparent;
   }
 }
