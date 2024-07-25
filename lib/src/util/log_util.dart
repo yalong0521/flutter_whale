@@ -18,6 +18,13 @@ class LogUtil {
 
   static final _lock = Lock();
 
+  /// log文件头
+  static String? _logFileHeader;
+
+  static void setLogFileHeader(String? logFileHeader) {
+    _logFileHeader = logFileHeader;
+  }
+
   static void log(Object? object,
       {String path = kDefaultPath, LogLevel level = LogLevel.info}) async {
     if (object == null) return;
@@ -47,6 +54,14 @@ class LogUtil {
     var logLevelDir = await _getLogPathLevelDir(path, level);
     var logFileName = formatDate(dateTime, [yyyy, mm, dd, HH]);
     var logFile = File(join(logLevelDir.path, '${logFileName}00.log'));
+    if (!logFile.existsSync()) {
+      logFile.createSync();
+      var logFileHeader = _logFileHeader;
+      if (logFileHeader != null) {
+        // 第一次创建的时候写入文件头
+        await logFile.writeAsString(logFileHeader, mode: FileMode.write);
+      }
+    }
     await logFile.writeAsString(
       '[ $dateTime ] $log${Platform.lineTerminator * 2}',
       mode: FileMode.append,
@@ -62,8 +77,10 @@ class LogUtil {
     if (Platform.isAndroid) {
       var externalStorageDir = await getExternalStorageDirectory();
       if (externalStorageDir != null) dir = externalStorageDir;
+    } else if (Platform.isWindows) {
+      dir = await getApplicationSupportDirectory();
     }
-    dir = dir ?? await getApplicationSupportDirectory();
+    dir = dir ?? await getApplicationDocumentsDirectory();
     var logRootDir = Directory(join(dir.path, 'logs'));
     if (!logRootDir.existsSync()) logRootDir.createSync();
     return logRootDir;
