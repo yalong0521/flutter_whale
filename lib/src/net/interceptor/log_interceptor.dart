@@ -9,7 +9,7 @@ class LogsInterceptor extends Interceptor {
   @override
   onRequest(RequestOptions options, handler) async {
     List<String> logList = [];
-    logList.add('HttpRequestStart${'=' * 120}>>');
+    logList.add('* HttpRequestBegin ${'*' * 30}');
     logList.add('请求地址: ${options.uri.toString()} (${options.method})');
     for (var value in options.headers.entries) {
       if (value.value == null) options.headers[value.key] = '';
@@ -19,11 +19,12 @@ class LogsInterceptor extends Interceptor {
       if (options.data is FormData) {
         final formData = options.data as FormData;
         logList.add('请求体(FormData@fields): ${formData.fields.toString()}');
-        mapper(e) => MapEntry(e.key, e.value.filename);
-        var map = formData.files.map(mapper);
+        var map = formData.files.map((e) => MapEntry(e.key, e.value.filename));
         logList.add('请求体(FormData@files): ${map.toString()}');
+      } else if (options.data is Map<String, dynamic>) {
+        logList.add('请求体(json): ${jsonEncode(options.data)}');
       } else {
-        logList.add('请求体: ${jsonEncode(options.data)}');
+        logList.add('请求体: ${options.data}');
       }
     }
     _logs[options] = logList;
@@ -35,14 +36,21 @@ class LogsInterceptor extends Interceptor {
     var options = response.requestOptions;
     List<String>? logList = _logs[options];
     var responseType = response.requestOptions.responseType;
-    if (responseType == ResponseType.json) {
-      logList?.add('返回数据: ${jsonEncode(response.data)}');
-    } else if (responseType == ResponseType.plain) {
-      logList?.add('返回数据: ${response.data}');
-    } else {
-      logList?.add('返回数据: 暂不支持打印(${response.data.runtimeType})');
+    switch (responseType) {
+      case ResponseType.json:
+        logList?.add('返回数据(json): ${jsonEncode(response.data)}');
+        break;
+      case ResponseType.stream:
+        logList?.add('返回数据(stream): (${response.data.runtimeType})');
+        break;
+      case ResponseType.plain:
+        logList?.add('返回数据(plain): ${response.data}');
+        break;
+      case ResponseType.bytes:
+        logList?.add('返回数据(bytes): ${response.data}');
+        break;
     }
-    logList?.add('HttpRequestEnd<<${'=' * 120}');
+    logList?.add('${'*' * 30}  HttpRequestEnd  ${'*' * 30}');
     LogUtil.log(logList, path: kHttpClientLogPath);
     _logs.remove(options);
     return super.onResponse(response, handler);
@@ -53,7 +61,7 @@ class LogsInterceptor extends Interceptor {
     var options = err.requestOptions;
     List<String>? logList = _logs[options];
     logList?.add('请求异常: ${_errorToString(err)}');
-    logList?.add('HttpRequestEnd<<${'=' * 120}');
+    logList?.add('${'*' * 30}  HttpRequestEnd  ${'*' * 30}');
     LogUtil.logE(logList, path: kHttpClientLogPath);
     _logs.remove(options);
     return super.onError(err, handler);

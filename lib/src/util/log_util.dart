@@ -63,7 +63,7 @@ class LogUtil {
       }
     }
     await logFile.writeAsString(
-      '[ $dateTime ] $log${Platform.lineTerminator * 2}',
+      '[$dateTime] $log${Platform.lineTerminator * 2}',
       mode: FileMode.append,
     );
   }
