@@ -20,6 +20,7 @@ class AppConfig extends ChangeNotifier {
   TransitionType dialogTransitionType;
   SizeConverter awConverter;
   SizeConverter ahConverter;
+  SizeConverter arConverter;
   SizeConverter aspConverter;
   LoadingConfig loadingConfig;
 
@@ -31,6 +32,7 @@ class AppConfig extends ChangeNotifier {
     required this.dialogTransitionType,
     required this.awConverter,
     required this.ahConverter,
+    required this.arConverter,
     required this.aspConverter,
     required this.loadingConfig,
   });
@@ -43,6 +45,7 @@ class AppConfig extends ChangeNotifier {
     TransitionType? newDialogType,
     SizeConverter? newAwConverter,
     SizeConverter? newAhConverter,
+    SizeConverter? newArConverter,
     SizeConverter? newAspConverter,
     LoadingConfig? newLoadingConfig,
   }) {
@@ -63,6 +66,9 @@ class AppConfig extends ChangeNotifier {
     }
     if (newAhConverter != ahConverter) {
       ahConverter = newAhConverter ?? _defaultConverter;
+    }
+    if (newArConverter != arConverter) {
+      arConverter = newArConverter ?? _defaultConverter;
     }
     if (newAspConverter != aspConverter) {
       aspConverter = newAspConverter ?? _defaultConverter;
@@ -88,6 +94,7 @@ class BaseApp extends StatefulWidget {
   final TransitionType dialogTransitionType;
   final SizeConverter awConverter;
   final SizeConverter ahConverter;
+  final SizeConverter arConverter;
   final SizeConverter aspConverter;
   final LoadingConfig loadingConfig;
 
@@ -101,10 +108,12 @@ class BaseApp extends StatefulWidget {
     this.dialogTransitionType = TransitionType.fade,
     SizeConverter? awConverter,
     SizeConverter? ahConverter,
+    SizeConverter? arConverter,
     SizeConverter? aspConverter,
     LoadingConfig? loadingConfig,
   })  : awConverter = awConverter ?? _defaultConverter,
         ahConverter = ahConverter ?? _defaultConverter,
+        arConverter = arConverter ?? _defaultConverter,
         aspConverter = aspConverter ?? _defaultConverter,
         loadingConfig = loadingConfig ?? _defaultLoadingConfig;
 
@@ -121,6 +130,7 @@ class _BaseAppState extends State<BaseApp> {
     dialogTransitionType: widget.dialogTransitionType,
     awConverter: widget.awConverter,
     ahConverter: widget.ahConverter,
+    arConverter: widget.arConverter,
     aspConverter: widget.aspConverter,
     loadingConfig: widget.loadingConfig,
   );
@@ -144,6 +154,7 @@ class _BaseAppState extends State<BaseApp> {
       newDialogType: widget.dialogTransitionType,
       newAwConverter: widget.awConverter,
       newAhConverter: widget.ahConverter,
+      newArConverter: widget.arConverter,
       newAspConverter: widget.aspConverter,
       newLoadingConfig: widget.loadingConfig,
     );

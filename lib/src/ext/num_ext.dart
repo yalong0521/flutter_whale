@@ -5,5 +5,7 @@ extension DoubleExt on num {
 
   double get ah => appConfig.ahConverter(this);
 
+  double get ar => appConfig.arConverter(this);
+
   double get asp => appConfig.aspConverter(this);
 }
