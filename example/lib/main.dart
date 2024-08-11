@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BaseApp(
+      designSize: const Size(720, 1280),
       builder: (context, key) {
         return MaterialApp(
           navigatorKey: key,

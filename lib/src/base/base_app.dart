@@ -1,7 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_whale/flutter_whale.dart';
-
-typedef SizeConverter = double Function(num size);
 
 typedef BaseWidgetBuilder = Widget Function(
     BuildContext context, GlobalKey<NavigatorState> baseKey);
@@ -14,45 +14,39 @@ final GlobalKey<NavigatorState> _baseKey = GlobalKey<NavigatorState>();
 
 class AppConfig extends ChangeNotifier {
   ToastConfig? toastConfig;
-  double appTextDefaultSize;
+  ValueGetter<double>? appTextDefaultSize;
   bool log2File;
   TransitionType pageTransitionType;
   TransitionType dialogTransitionType;
-  SizeConverter awConverter;
-  SizeConverter ahConverter;
-  SizeConverter arConverter;
-  SizeConverter aspConverter;
   LoadingConfig loadingConfig;
+  Size designSize;
+  bool scaleSize;
 
   AppConfig({
     this.toastConfig,
-    required this.appTextDefaultSize,
+    this.appTextDefaultSize,
     required this.log2File,
     required this.pageTransitionType,
     required this.dialogTransitionType,
-    required this.awConverter,
-    required this.ahConverter,
-    required this.arConverter,
-    required this.aspConverter,
     required this.loadingConfig,
+    required this.designSize,
+    required this.scaleSize,
   });
 
   void update({
     bool? newLog2File,
     ToastConfig? newConfig,
-    double newSize = 18,
+    ValueGetter<double>? newAppTextDefaultSize,
     TransitionType? newPageType,
     TransitionType? newDialogType,
-    SizeConverter? newAwConverter,
-    SizeConverter? newAhConverter,
-    SizeConverter? newArConverter,
-    SizeConverter? newAspConverter,
     LoadingConfig? newLoadingConfig,
+    Size? newDesignSize,
+    bool? newScaleSize,
   }) {
     if (newLog2File != null) log2File = newLog2File;
     if (newConfig != toastConfig) toastConfig = newConfig;
-    if (newSize != appTextDefaultSize) {
-      appTextDefaultSize = newSize;
+    if (newAppTextDefaultSize != null) {
+      appTextDefaultSize = newAppTextDefaultSize;
       notifyListeners();
     }
     if (newPageType != pageTransitionType) {
@@ -61,61 +55,84 @@ class AppConfig extends ChangeNotifier {
     if (newDialogType != dialogTransitionType) {
       dialogTransitionType = newDialogType ?? TransitionType.fade;
     }
-    if (newAwConverter != awConverter) {
-      awConverter = newAwConverter ?? _defaultConverter;
-    }
-    if (newAhConverter != ahConverter) {
-      ahConverter = newAhConverter ?? _defaultConverter;
-    }
-    if (newArConverter != arConverter) {
-      arConverter = newArConverter ?? _defaultConverter;
-    }
-    if (newAspConverter != aspConverter) {
-      aspConverter = newAspConverter ?? _defaultConverter;
-    }
     if (newLoadingConfig != loadingConfig) {
       loadingConfig = newLoadingConfig ??
           LoadingConfig(builder: (text) => DefaultLoadingDialog(text));
     }
+    if (newDesignSize != null) designSize = newDesignSize;
+    if (newScaleSize != null) scaleSize = newScaleSize;
+  }
+
+  double convertW(num size) {
+    var screenSize = MediaQuery.sizeOf(baseContext);
+    return _calc(screenSize.width, designSize.width, size);
+  }
+
+  double convertH(num size) {
+    var screenSize = MediaQuery.sizeOf(baseContext);
+    return _calc(screenSize.height, designSize.height, size);
+  }
+
+  double convertR(num size) => min(convertW(size), convertH(size));
+
+  double convertSW(num size) {
+    var screenSize = MediaQuery.sizeOf(baseContext);
+    return screenSize.width / designSize.width * size;
+  }
+
+  double convertSH(num size) {
+    var screenSize = MediaQuery.sizeOf(baseContext);
+    return screenSize.height / designSize.height * size;
+  }
+
+  double convertSR(num size) => min(convertSW(size), convertSH(size));
+
+  double convertSPW(double percent) {
+    percent = max(0, min(1, percent));
+    var screenSize = MediaQuery.sizeOf(baseContext);
+    return screenSize.width * percent;
+  }
+
+  double convertSPH(double percent) {
+    percent = max(0, min(1, percent));
+    var screenSize = MediaQuery.sizeOf(baseContext);
+    return screenSize.height * percent;
+  }
+
+  double convertSPR(double size) => min(convertSPW(size), convertSPH(size));
+
+  double _calc(double screen, double design, num value) {
+    if (screen >= design) return value.toDouble();
+    return value * screen / design;
   }
 }
-
-double Function(num value) _defaultConverter = (num value) => value.toDouble();
 
 LoadingConfig _defaultLoadingConfig =
     LoadingConfig(builder: (text) => DefaultLoadingDialog(text));
 
 class BaseApp extends StatefulWidget {
   final BaseWidgetBuilder builder;
+  final Size designSize;
   final bool log2File;
   final ToastConfig? toastConfig;
-  final double appTextDefaultSize;
+  final ValueGetter<double>? appTextDefaultSize;
   final TransitionType pageTransitionType;
   final TransitionType dialogTransitionType;
-  final SizeConverter awConverter;
-  final SizeConverter ahConverter;
-  final SizeConverter arConverter;
-  final SizeConverter aspConverter;
   final LoadingConfig loadingConfig;
+  final bool scaleSize;
 
   BaseApp({
     super.key,
     required this.builder,
+    required this.designSize,
     this.log2File = false,
     this.toastConfig,
-    this.appTextDefaultSize = 18,
+    this.appTextDefaultSize,
     this.pageTransitionType = TransitionType.theme,
     this.dialogTransitionType = TransitionType.fade,
-    SizeConverter? awConverter,
-    SizeConverter? ahConverter,
-    SizeConverter? arConverter,
-    SizeConverter? aspConverter,
     LoadingConfig? loadingConfig,
-  })  : awConverter = awConverter ?? _defaultConverter,
-        ahConverter = ahConverter ?? _defaultConverter,
-        arConverter = arConverter ?? _defaultConverter,
-        aspConverter = aspConverter ?? _defaultConverter,
-        loadingConfig = loadingConfig ?? _defaultLoadingConfig;
+    this.scaleSize = false,
+  }) : loadingConfig = loadingConfig ?? _defaultLoadingConfig;
 
   @override
   State<StatefulWidget> createState() => _BaseAppState();
@@ -128,11 +145,9 @@ class _BaseAppState extends State<BaseApp> {
     appTextDefaultSize: widget.appTextDefaultSize,
     pageTransitionType: widget.pageTransitionType,
     dialogTransitionType: widget.dialogTransitionType,
-    awConverter: widget.awConverter,
-    ahConverter: widget.ahConverter,
-    arConverter: widget.arConverter,
-    aspConverter: widget.aspConverter,
     loadingConfig: widget.loadingConfig,
+    designSize: widget.designSize,
+    scaleSize: widget.scaleSize,
   );
 
   @override
@@ -149,14 +164,12 @@ class _BaseAppState extends State<BaseApp> {
     _appConfig.update(
       newLog2File: widget.log2File,
       newConfig: widget.toastConfig,
-      newSize: widget.appTextDefaultSize,
+      newAppTextDefaultSize: widget.appTextDefaultSize,
       newPageType: widget.pageTransitionType,
       newDialogType: widget.dialogTransitionType,
-      newAwConverter: widget.awConverter,
-      newAhConverter: widget.ahConverter,
-      newArConverter: widget.arConverter,
-      newAspConverter: widget.aspConverter,
       newLoadingConfig: widget.loadingConfig,
+      newDesignSize: widget.designSize,
+      newScaleSize: widget.scaleSize,
     );
   }
 }

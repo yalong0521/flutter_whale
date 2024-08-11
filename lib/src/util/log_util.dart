@@ -52,7 +52,7 @@ class LogUtil {
   static Future _log2File(
       String path, LogLevel level, DateTime dateTime, String log) async {
     var logLevelDir = await _getLogPathLevelDir(path, level);
-    var logFileName = formatDate(dateTime, [yyyy, mm, dd, HH]);
+    var logFileName = formatDate(dateTime, [yyyy, mm, dd, kHH]);
     var logFile = File(join(logLevelDir.path, '${logFileName}00.log'));
     if (!logFile.existsSync()) {
       logFile.createSync();

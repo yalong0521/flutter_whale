@@ -38,7 +38,7 @@ class AppText extends StatelessWidget {
       maxLines: maxLines,
       textAlign: textAlign,
       style: TextStyle(
-        fontSize: size ?? appConfig.appTextDefaultSize,
+        fontSize: size ?? appConfig.appTextDefaultSize?.call() ?? 18,
         color: typeColor,
         fontWeight: weight,
         height: height,

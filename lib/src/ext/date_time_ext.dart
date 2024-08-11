@@ -18,17 +18,17 @@ extension DateTimeExt on DateTime {
 
   /// ---> 10:58
   String formatTime() {
-    return f.formatDate(this, [f.HH, ':', f.nn]);
+    return f.formatDate(this, [f.kHH, ':', f.nn]);
   }
 
   /// ---> 10:58:28
   String formatTimeFull() {
-    return f.formatDate(this, [f.HH, ':', f.nn, ':', f.ss]);
+    return f.formatDate(this, [f.kHH, ':', f.nn, ':', f.ss]);
   }
 
   String formatDateTime(String split) {
     return f.formatDate(
-        this, [f.yyyy, split, f.mm, split, f.dd, ' ', f.HH, ':', f.nn]);
+        this, [f.yyyy, split, f.mm, split, f.dd, ' ', f.kHH, ':', f.nn]);
   }
 
   /// ---> 2023-11-29 10:58
@@ -39,7 +39,7 @@ extension DateTimeExt on DateTime {
 
   String formatDateTimeFull(String split) {
     return f.formatDate(this,
-        [f.yyyy, split, f.mm, split, f.dd, ' ', f.HH, ':', f.nn, ':', f.ss]);
+        [f.yyyy, split, f.mm, split, f.dd, ' ', f.kHH, ':', f.nn, ':', f.ss]);
   }
 
   /// ---> 2023-11-29 10:58:28

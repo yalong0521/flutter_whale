@@ -132,21 +132,21 @@ class _DefaultLoadingDialogWidget extends StatelessWidget {
   Widget _body() {
     return Container(
       padding: text == null
-          ? EdgeInsets.all(20.aw)
-          : EdgeInsets.symmetric(vertical: 20.aw, horizontal: 40.aw),
+          ? EdgeInsets.all(20.w)
+          : EdgeInsets.symmetric(vertical: 20.w, horizontal: 40.w),
       decoration: BoxDecoration(
         color: Colors.black54,
-        borderRadius: BorderRadius.circular(8.aw),
+        borderRadius: BorderRadius.circular(8.w),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CupertinoActivityIndicator(color: Colors.white, radius: 12.aw),
+          CupertinoActivityIndicator(color: Colors.white, radius: 12.w),
           if (text != null) ...[
-            VSpacer(15.aw),
+            VSpacer(15.w),
             Text(
               text!,
-              style: TextStyle(fontSize: 14.asp, color: Colors.white70),
+              style: TextStyle(fontSize: 14.w, color: Colors.white70),
             ),
           ]
         ],

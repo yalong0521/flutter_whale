@@ -33,16 +33,16 @@ const String m = 'm';
 /// Outputs month as long name
 ///
 /// Example:
-///     formatDate(DateTime(1989, 2), [MM]);
+///     formatDate(DateTime(1989, 2), [kMM]);
 ///     // => february
-const String MM = 'MM';
+const String kMM = 'MM';
 
 /// Outputs month as short name
 ///
 /// Example:
-///     formatDate(DateTime(1989, 2), [M]);
+///     formatDate(DateTime(1989, 2), [kM]);
 ///     // => feb
-const String M = 'M';
+const String kM = 'M';
 
 /// Outputs day as two digits
 ///
@@ -76,7 +76,7 @@ const String w = 'w';
 ///     // => 53
 ///     formatDate(DateTime(1989, 2, 21), [W]);
 ///     // => 08
-const String WW = 'WW';
+const String kWW = 'WW';
 
 /// Outputs week in year compactly
 ///
@@ -88,9 +88,9 @@ const String W = 'W';
 /// Outputs week day as long name
 ///
 /// Example:
-///     formatDate(DateTime(2018, 1, 14), [DD]);
+///     formatDate(DateTime(2018, 1, 14), [kDD]);
 ///     // => sunday
-const String DD = 'DD';
+const String kDD = 'DD';
 
 /// Outputs week day as long name
 ///
@@ -116,9 +116,9 @@ const String h = 'h';
 /// Outputs hour (0 to 23) as two digits
 ///
 /// Example:
-///     formatDate(DateTime(1989, 02, 1, 15), [HH]);
+///     formatDate(DateTime(1989, 02, 1, 15), [kHH]);
 ///     // => 15
-const String HH = 'HH';
+const String kHH = 'HH';
 
 /// Outputs hour (0 to 23) compactly
 ///
@@ -162,24 +162,24 @@ const String s = 's';
 /// Outputs millisecond as three digits
 ///
 /// Example:
-///     formatDate(DateTime(1989, 02, 1, 15, 40, 10, 999), [SSS]);
+///     formatDate(DateTime(1989, 02, 1, 15, 40, 10, 999), [kSSS]);
 ///     // => 999
 ///     formatDate(DateTime(1989, 02, 1, 15, 40, 10, 99), [SS]);
 ///     // => 099
 ///     formatDate(DateTime(1989, 02, 1, 15, 40, 10, 0), [SS]);
 ///     // => 009
-const String SSS = 'SSS';
+const String kSSS = 'SSS';
 
 /// Outputs millisecond compactly
 ///
 /// Example:
-///     formatDate(DateTime(1989, 02, 1, 15, 40, 10, 999), [SSS]);
+///     formatDate(DateTime(1989, 02, 1, 15, 40, 10, 999), [kSSS]);
 ///     // => 999
 ///     formatDate(DateTime(1989, 02, 1, 15, 40, 10, 99), [SS]);
 ///     // => 99
 ///     formatDate(DateTime(1989, 02, 1, 15, 40, 10, 9), [SS]);
 ///     // => 9
-const String S = 'S';
+const String kS = 'S';
 
 /// Outputs microsecond as three digits
 ///
@@ -244,9 +244,9 @@ String formatDate(DateTime date, List<String> formats,
       sb.write(_digits(date.month, 2));
     } else if (format == m) {
       sb.write(date.month);
-    } else if (format == MM) {
+    } else if (format == kMM) {
       sb.write(locale.monthsLong[date.month - 1]);
-    } else if (format == M) {
+    } else if (format == kM) {
       sb.write(locale.monthsShort[date.month - 1]);
     } else if (format == dd) {
       sb.write(_digits(date.day, 2));
@@ -256,13 +256,13 @@ String formatDate(DateTime date, List<String> formats,
       sb.write((date.day + 7) ~/ 7);
     } else if (format == W) {
       sb.write((dayInYear(date) + 7) ~/ 7);
-    } else if (format == WW) {
+    } else if (format == kWW) {
       sb.write(_digits((dayInYear(date) + 7) ~/ 7, 2));
-    } else if (format == DD) {
+    } else if (format == kDD) {
       sb.write(locale.daysLong[date.weekday - 1]);
     } else if (format == D) {
       sb.write(locale.daysShort[date.weekday - 1]);
-    } else if (format == HH) {
+    } else if (format == kHH) {
       sb.write(_digits(date.hour, 2));
     } else if (format == H) {
       sb.write(date.hour);
@@ -284,9 +284,9 @@ String formatDate(DateTime date, List<String> formats,
       sb.write(_digits(date.second, 2));
     } else if (format == s) {
       sb.write(date.second);
-    } else if (format == SSS) {
+    } else if (format == kSSS) {
       sb.write(_digits(date.millisecond, 3));
-    } else if (format == S) {
+    } else if (format == kS) {
       sb.write(date.millisecond);
     } else if (format == uuu) {
       sb.write(_digits(date.microsecond, 3));
