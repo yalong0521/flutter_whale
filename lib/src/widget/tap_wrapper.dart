@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_whale/flutter_whale.dart';
 
 enum TapBehavior {
@@ -20,6 +21,7 @@ class TapWrapper extends StatefulWidget {
   final TapBehavior behavior;
   final int? milliseconds;
   final bool enable;
+  final bool focusFeedbackEnable;
 
   const TapWrapper({
     super.key,
@@ -30,6 +32,7 @@ class TapWrapper extends StatefulWidget {
     this.behavior = TapBehavior.none,
     this.milliseconds,
     this.enable = true,
+    this.focusFeedbackEnable = false,
   });
 
   @override
@@ -39,6 +42,7 @@ class TapWrapper extends StatefulWidget {
 class _TapWrapperState extends State<TapWrapper> {
   double _pressOpacity = 1.0;
   late GestureTapCallback _onTap;
+  bool _hasFocus = false;
 
   @override
   void initState() {
@@ -55,14 +59,44 @@ class _TapWrapperState extends State<TapWrapper> {
       child: widget.child,
     );
     return widget.enable
-        ? GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => _onTap(),
-            onLongPress: widget.onLongPress,
-            onTapDown: (details) => notifyOpacityChanged(true),
-            onTapUp: (details) => notifyOpacityChanged(false),
-            onTapCancel: () => notifyOpacityChanged(false),
-            child: Opacity(opacity: _pressOpacity, child: child),
+        ? Focus(
+            onFocusChange: (hasFocus) => setState(() => _hasFocus = hasFocus),
+            onKeyEvent: (FocusNode node, KeyEvent event) {
+              if (event.logicalKey == LogicalKeyboardKey.select) {
+                if (event is KeyDownEvent) {
+                  notifyOpacityChanged(true);
+                  return KeyEventResult.handled;
+                } else if (event is KeyUpEvent) {
+                  notifyOpacityChanged(false);
+                  _onTap();
+                  return KeyEventResult.handled;
+                }
+              }
+              return KeyEventResult.ignored;
+            },
+            child: widget.focusFeedbackEnable
+                ? AnimatedScale(
+                    scale: _hasFocus ? 1.1 : 1,
+                    duration: const Duration(milliseconds: 200),
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => _onTap(),
+                      onLongPress: widget.onLongPress,
+                      onTapDown: (details) => notifyOpacityChanged(true),
+                      onTapUp: (details) => notifyOpacityChanged(false),
+                      onTapCancel: () => notifyOpacityChanged(false),
+                      child: Opacity(opacity: _pressOpacity, child: child),
+                    ),
+                  )
+                : GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => _onTap(),
+                    onLongPress: widget.onLongPress,
+                    onTapDown: (details) => notifyOpacityChanged(true),
+                    onTapUp: (details) => notifyOpacityChanged(false),
+                    onTapCancel: () => notifyOpacityChanged(false),
+                    child: Opacity(opacity: _pressOpacity, child: child),
+                  ),
           )
         : Opacity(opacity: 0.5, child: child);
   }

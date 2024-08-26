@@ -20,7 +20,8 @@ class AppConfig extends ChangeNotifier {
   TransitionType dialogTransitionType;
   LoadingConfig loadingConfig;
   Size designSize;
-  bool scaleSize;
+  bool scaleSizeEnable;
+  double? scaleSizeUpperLimit;
 
   AppConfig({
     this.toastConfig,
@@ -30,7 +31,8 @@ class AppConfig extends ChangeNotifier {
     required this.dialogTransitionType,
     required this.loadingConfig,
     required this.designSize,
-    required this.scaleSize,
+    required this.scaleSizeEnable,
+    this.scaleSizeUpperLimit,
   });
 
   void update({
@@ -42,12 +44,12 @@ class AppConfig extends ChangeNotifier {
     LoadingConfig? newLoadingConfig,
     Size? newDesignSize,
     bool? newScaleSize,
+    double? newScaleSizeUpperLimit,
   }) {
     if (newLog2File != null) log2File = newLog2File;
     if (newConfig != toastConfig) toastConfig = newConfig;
     if (newAppTextDefaultSize != null) {
       appTextDefaultSize = newAppTextDefaultSize;
-      notifyListeners();
     }
     if (newPageType != pageTransitionType) {
       pageTransitionType = newPageType ?? TransitionType.theme;
@@ -60,7 +62,9 @@ class AppConfig extends ChangeNotifier {
           LoadingConfig(builder: (text) => DefaultLoadingDialog(text));
     }
     if (newDesignSize != null) designSize = newDesignSize;
-    if (newScaleSize != null) scaleSize = newScaleSize;
+    if (newScaleSize != null) scaleSizeEnable = newScaleSize;
+    scaleSizeUpperLimit = newScaleSizeUpperLimit;
+    notifyListeners();
   }
 
   double convertW(num size) {
@@ -77,12 +81,16 @@ class AppConfig extends ChangeNotifier {
 
   double convertSW(num size) {
     var screenSize = MediaQuery.sizeOf(baseContext);
-    return screenSize.width / designSize.width * size;
+    var upperLimit = appConfig.scaleSizeUpperLimit;
+    var scale = screenSize.width / designSize.width;
+    return (upperLimit == null ? scale : min(scale, upperLimit)) * size;
   }
 
   double convertSH(num size) {
     var screenSize = MediaQuery.sizeOf(baseContext);
-    return screenSize.height / designSize.height * size;
+    var upperLimit = appConfig.scaleSizeUpperLimit;
+    var scale = screenSize.height / designSize.height;
+    return (upperLimit == null ? scale : min(scale, upperLimit)) * size;
   }
 
   double convertSR(num size) => min(convertSW(size), convertSH(size));
@@ -119,7 +127,8 @@ class BaseApp extends StatefulWidget {
   final TransitionType pageTransitionType;
   final TransitionType dialogTransitionType;
   final LoadingConfig loadingConfig;
-  final bool scaleSize;
+  final bool scaleSizeEnable;
+  final double? scaleSizeUpperLimit;
 
   BaseApp({
     super.key,
@@ -131,7 +140,8 @@ class BaseApp extends StatefulWidget {
     this.pageTransitionType = TransitionType.theme,
     this.dialogTransitionType = TransitionType.fade,
     LoadingConfig? loadingConfig,
-    this.scaleSize = false,
+    this.scaleSizeEnable = false,
+    this.scaleSizeUpperLimit,
   }) : loadingConfig = loadingConfig ?? _defaultLoadingConfig;
 
   @override
@@ -147,7 +157,8 @@ class _BaseAppState extends State<BaseApp> {
     dialogTransitionType: widget.dialogTransitionType,
     loadingConfig: widget.loadingConfig,
     designSize: widget.designSize,
-    scaleSize: widget.scaleSize,
+    scaleSizeEnable: widget.scaleSizeEnable,
+    scaleSizeUpperLimit: widget.scaleSizeUpperLimit,
   );
 
   @override
@@ -169,7 +180,8 @@ class _BaseAppState extends State<BaseApp> {
       newDialogType: widget.dialogTransitionType,
       newLoadingConfig: widget.loadingConfig,
       newDesignSize: widget.designSize,
-      newScaleSize: widget.scaleSize,
+      newScaleSize: widget.scaleSizeEnable,
+      newScaleSizeUpperLimit: widget.scaleSizeUpperLimit,
     );
   }
 }

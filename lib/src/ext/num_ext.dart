@@ -2,7 +2,7 @@ import 'package:flutter_whale/flutter_whale.dart';
 
 extension NumExt on num {
   double get w {
-    if (appConfig.scaleSize) {
+    if (appConfig.scaleSizeEnable) {
       return appConfig.convertSW(this);
     } else {
       return appConfig.convertW(this);
@@ -10,7 +10,7 @@ extension NumExt on num {
   }
 
   double get h {
-    if (appConfig.scaleSize) {
+    if (appConfig.scaleSizeEnable) {
       return appConfig.convertSH(this);
     } else {
       return appConfig.convertH(this);
@@ -18,7 +18,7 @@ extension NumExt on num {
   }
 
   double get r {
-    if (appConfig.scaleSize) {
+    if (appConfig.scaleSizeEnable) {
       return appConfig.convertSR(this);
     } else {
       return appConfig.convertR(this);
