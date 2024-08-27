@@ -99,4 +99,10 @@ class PageTransition<T> extends PageRouteBuilder<T> {
     return TransitionUtil.pageTransition(
         type, _curve, context, animation, secondaryAnimation, child, this);
   }
+
+  @override
+  bool didPop(T? result) {
+    if (DialogUtil.loadingIsShowing) return false;
+    return super.didPop(result);
+  }
 }

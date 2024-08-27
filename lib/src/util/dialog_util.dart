@@ -14,6 +14,8 @@ class DialogUtil {
 
   static final Map<BuildContext, _LoadingOverlay> _loadingOverlayMap = {};
 
+  static bool get loadingIsShowing => _loadingOverlayMap.isNotEmpty;
+
   static void showLoading({
     String? text,
     BuildContext? context,
