@@ -1,5 +1,22 @@
 import 'package:flutter_whale/flutter_whale.dart';
 
+extension NullableNumExt on num? {
+  String get removeTrailingZerosToString {
+    final num? temp = this;
+    if (temp == null) return '';
+    final tempStr = temp.toString();
+    if (!RegExp(r'^[^.]+\.[^.]+$').hasMatch(tempStr)) return tempStr;
+    var split = tempStr.split('.');
+    var first = split[0];
+    var last = split[1];
+    if (int.tryParse(last) == 0) return first;
+    var remove = int.tryParse(last.split('').reversed.join());
+    return '$first.$remove';
+  }
+
+  num get removeTrailingZeros => num.parse(removeTrailingZerosToString);
+}
+
 extension NumExt on num {
   double get w {
     if (appConfig.scaleSizeEnable) {

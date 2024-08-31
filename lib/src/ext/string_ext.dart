@@ -42,6 +42,8 @@ extension StringExt on String {
             alignment: alignment,
           );
   }
+
+  Color get color => Color(int.parse(this));
 }
 
 extension NullableStringExt on String? {
@@ -82,5 +84,17 @@ extension NullableStringExt on String? {
     }
     LogUtil.logE('颜色转换失败:不支持的色值格式：$this', path: kDefaultPath);
     return Colors.transparent;
+  }
+
+  bool containsIgnoreCase(String other) {
+    var str = this;
+    if (str == null) return false;
+    return str.toLowerCase().contains(other.toLowerCase());
+  }
+
+  String get removeTrailingZeros {
+    final String? temp = this;
+    if (temp == null || temp.isEmpty) return '';
+    return num.tryParse(temp).removeTrailingZerosToString;
   }
 }
