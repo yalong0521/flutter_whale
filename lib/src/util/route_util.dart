@@ -17,6 +17,7 @@ class RouteUtil {
     bool maintainState = true,
     bool clearStack = false,
     BuildContext? context,
+    String? name,
   }) {
     var route = PageTransition<T>(
       child: page,
@@ -25,6 +26,7 @@ class RouteUtil {
       fullscreenDialog: fullscreenDialog,
       opaque: opaque,
       maintainState: maintainState,
+      name: name,
     );
     var navigator = Navigator.of(context ?? baseContext);
     if (clearStack) {
@@ -37,6 +39,31 @@ class RouteUtil {
     }
   }
 
+  static Future<T?> toOff<T>(
+    Widget page, {
+    Object? arguments,
+    TransitionType? transition,
+    bool fullscreenDialog = false,
+    bool opaque = true,
+    bool maintainState = true,
+    BuildContext? context,
+    String? name,
+    required String offToName,
+  }) {
+    return Navigator.of(context ?? baseContext).pushAndRemoveUntil<T>(
+      PageTransition<T>(
+        child: page,
+        arguments: arguments,
+        type: transition ?? appConfig.pageTransitionType,
+        fullscreenDialog: fullscreenDialog,
+        opaque: opaque,
+        maintainState: maintainState,
+        name: name,
+      ),
+      ModalRoute.withName(offToName),
+    );
+  }
+
   static Future<T?> off<T, TO>(
     Widget page, {
     Object? arguments,
@@ -46,6 +73,7 @@ class RouteUtil {
     bool maintainState = true,
     TO? result,
     BuildContext? context,
+    String? name,
   }) {
     return Navigator.of(context ?? baseContext).pushReplacement<T, TO>(
       PageTransition(
@@ -55,6 +83,7 @@ class RouteUtil {
         fullscreenDialog: fullscreenDialog,
         opaque: opaque,
         maintainState: maintainState,
+        name: name,
       ),
       result: result,
     );
@@ -72,6 +101,8 @@ class PageTransition<T> extends PageRouteBuilder<T> {
 
   final Object? arguments;
 
+  final String? name;
+
   final Curve _curve = Curves.ease;
 
   PageTransition({
@@ -79,6 +110,7 @@ class PageTransition<T> extends PageRouteBuilder<T> {
     required this.child,
     required this.type,
     this.arguments,
+    this.name,
     super.fullscreenDialog,
     super.opaque,
     super.maintainState,
@@ -86,7 +118,7 @@ class PageTransition<T> extends PageRouteBuilder<T> {
     super.reverseTransitionDuration,
   }) : super(
           pageBuilder: (buildContext, animation, secondaryAnimation) => child,
-          settings: RouteSettings(arguments: arguments),
+          settings: RouteSettings(arguments: arguments, name: name),
         );
 
   @override

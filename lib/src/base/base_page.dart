@@ -24,6 +24,27 @@ abstract class BasePage<M extends BaseModel> extends StatefulWidget {
       clearStack: clearStack,
       opaque: opaque ?? true,
       context: context,
+      name: name,
+    );
+  }
+
+  /// 页面跳转的时候使用
+  Future<T?> toOff<T>({
+    arguments,
+    TransitionType? transition,
+    bool? opaque,
+    BuildContext? context,
+    String? name,
+    required String offToName,
+  }) {
+    return RouteUtil.toOff<T>(
+      ChangeNotifierProvider(create: createModel, child: this),
+      arguments: arguments,
+      transition: transition,
+      opaque: opaque ?? true,
+      context: context,
+      name: name,
+      offToName: offToName,
     );
   }
 
@@ -42,12 +63,15 @@ abstract class BasePage<M extends BaseModel> extends StatefulWidget {
       result: result,
       opaque: opaque ?? true,
       context: context,
+      name: name,
     );
   }
 
   /// 如果不是页面跳转形式的，例如嵌套在PageView里面的用这个
   Widget page({Key? key}) =>
       ChangeNotifierProvider(create: createModel, key: key, child: this);
+
+  String? get name => null;
 }
 
 abstract class BaseState<P extends BasePage, M extends BaseModel>
@@ -69,14 +93,17 @@ abstract class BaseState<P extends BasePage, M extends BaseModel>
     super.didChangeMetrics();
   }
 
-  Selector<M, D> selector<D>(
-      {required D Function(BuildContext, M) selector,
-      required ValueWidgetBuilder<D> builder,
-      ShouldRebuild<D>? shouldRebuild}) {
+  Selector<M, D> selector<D>({
+    required D Function(BuildContext, M) selector,
+    required ValueWidgetBuilder<D> builder,
+    ShouldRebuild<D>? shouldRebuild,
+    Widget? child,
+  }) {
     return Selector<M, D>(
       selector: selector,
       builder: builder,
       shouldRebuild: shouldRebuild,
+      child: child,
     );
   }
 
