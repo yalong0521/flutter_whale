@@ -1,3 +1,3 @@
-# 1.2.4
+# 1.2.5
 
-## base_page新增toOff跳转方法，支持跳转页面并关闭页面到指定页；
+## 修复removeTrailingZerosToString的bug

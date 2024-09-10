@@ -9,8 +9,9 @@ extension NullableNumExt on num? {
     var split = tempStr.split('.');
     var first = split[0];
     var last = split[1];
-    if (int.tryParse(last) == 0) return first;
-    var remove = int.tryParse(last.split('').reversed.join());
+    if (int.parse(last) == 0) return first;
+    var reversed = int.parse(last.split('').reversed.join());
+    var remove = reversed.toString().split('').reversed.join();
     return '$first.$remove';
   }
 
