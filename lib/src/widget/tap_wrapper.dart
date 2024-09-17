@@ -29,7 +29,7 @@ class TapWrapper extends StatefulWidget {
     required this.onTap,
     this.onLongPress,
     this.pressedOpacity,
-    this.behavior = TapBehavior.none,
+    this.behavior = TapBehavior.throttle,
     this.milliseconds,
     this.enable = true,
     this.focusFeedbackEnable = false,

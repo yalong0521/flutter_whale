@@ -92,6 +92,10 @@ class RouteUtil {
   static void pop<T>({T? result, BuildContext? context}) {
     return Navigator.of(context ?? baseContext).pop<T>(result);
   }
+
+  static void popUntil(RoutePredicate predicate, {BuildContext? context}) {
+    return Navigator.of(context ?? baseContext).popUntil(predicate);
+  }
 }
 
 class PageTransition<T> extends PageRouteBuilder<T> {

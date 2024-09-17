@@ -1,3 +1,5 @@
-# 1.2.5
+# 1.2.6
 
-## 修复removeTrailingZerosToString的bug
+## RouteUtil新增popUntil
+
+## 调整TapWrapper默认behavior为TapBehavior.throttle
