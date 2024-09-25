@@ -6,7 +6,7 @@ extension FuncExt on Function() {
     Timer? debounceTimer;
     return () {
       if (debounceTimer?.isActive ?? false) debounceTimer?.cancel();
-      debounceTimer = Timer(Duration(milliseconds: milliseconds ?? 500), this);
+      debounceTimer = Timer(Duration(milliseconds: milliseconds ?? 250), this);
     };
   }
 
@@ -20,7 +20,7 @@ extension FuncExt on Function() {
       this();
       throttleTimer?.cancel();
       throttleTimer = Timer(
-        Duration(milliseconds: milliseconds ?? 500),
+        Duration(milliseconds: milliseconds ?? 250),
         () => isAllowed = true,
       );
     };
@@ -29,7 +29,7 @@ extension FuncExt on Function() {
 
 //带参数的函数防抖，由于参数不固定就没有用过扩展，直接用方法包裹
 void Function(T value) debounce<T>(void Function(T value) callback,
-    [int milliseconds = 500]) {
+    [int milliseconds = 250]) {
   Timer? debounceTimer;
   return (value) {
     if (debounceTimer?.isActive ?? false) debounceTimer?.cancel();
@@ -41,7 +41,7 @@ void Function(T value) debounce<T>(void Function(T value) callback,
 
 //带参数的函数节流，由于参数不固定就没有用过扩展，直接用方法包裹
 void Function(T value) throttle<T>(void Function(T value) callback,
-    [int milliseconds = 500]) {
+    [int milliseconds = 250]) {
   bool isAllowed = true;
   Timer? throttleTimer;
   return (value) {

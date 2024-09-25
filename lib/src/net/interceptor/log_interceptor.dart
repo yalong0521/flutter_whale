@@ -51,7 +51,7 @@ class LogsInterceptor extends Interceptor {
         break;
     }
     logList?.add('${'*' * 30}  HttpRequestEnd  ${'*' * 30}');
-    LogUtil.log(logList, path: kHttpClientLogPath);
+    logger.log(logList, path: kHttpClientLogPath);
     _logs.remove(options);
     return super.onResponse(response, handler);
   }
@@ -62,7 +62,7 @@ class LogsInterceptor extends Interceptor {
     List<String>? logList = _logs[options];
     logList?.add('请求异常: ${_errorToString(err)}');
     logList?.add('${'*' * 30}  HttpRequestEnd  ${'*' * 30}');
-    LogUtil.logE(logList, path: kHttpClientLogPath);
+    logger.logE(logList, path: kHttpClientLogPath);
     _logs.remove(options);
     return super.onError(err, handler);
   }

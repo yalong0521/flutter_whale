@@ -1,5 +1,3 @@
-# 1.2.6
+# 1.2.7
 
-## RouteUtil新增popUntil
-
-## 调整TapWrapper默认behavior为TapBehavior.throttle
+## 日志默认保留3天，超过的自动删除

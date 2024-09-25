@@ -12,20 +12,60 @@ enum LogLevel {
 
 const kDefaultPath = 'default';
 const kHttpClientLogPath = 'http';
+const kLogFileSuffix = '.log';
+
+LogUtil logger = LogUtil.shared;
 
 class LogUtil {
-  LogUtil._();
+  LogUtil._() {
+    getLogRootDir().then((value) {
+      for (var file in value.listSync()) {
+        _delete(file);
+      }
+    });
+  }
 
-  static final _lock = Lock();
+  static final LogUtil shared = LogUtil._();
+
+  final _lock = Lock();
 
   /// log文件头
-  static String? _logFileHeader;
+  String? _logFileHeader;
 
-  static void setLogFileHeader(String? logFileHeader) {
+  void _delete(FileSystemEntity file) {
+    if (FileSystemEntity.isFileSync(file.path)) {
+      final baseName = basename(file.path);
+      if (!baseName.endsWith(kLogFileSuffix)) return;
+      final split = baseName.split((kLogFileSuffix));
+      if (split.length != 2) return;
+      final datetime = _tryParseDatetime(split.first);
+      if (datetime == null) return;
+      if (DateTime.now().difference(datetime).inDays >= 3) {
+        log('日志文件过期清除===>$baseName');
+        file.deleteSync();
+      }
+    } else if (FileSystemEntity.isDirectorySync(file.path)) {
+      for (var value in Directory(file.path).listSync()) {
+        _delete(value);
+      }
+    }
+  }
+
+  DateTime? _tryParseDatetime(String datetimeStr) {
+    if (datetimeStr.length != 12) return null;
+    int year = int.parse(datetimeStr.substring(0, 4));
+    int month = int.parse(datetimeStr.substring(4, 6));
+    int day = int.parse(datetimeStr.substring(6, 8));
+    int hour = int.parse(datetimeStr.substring(8, 10));
+    int minute = int.parse(datetimeStr.substring(10, 12));
+    return DateTime(year, month, day, hour, minute);
+  }
+
+  void setLogFileHeader(String? logFileHeader) {
     _logFileHeader = logFileHeader;
   }
 
-  static void log(Object? object,
+  void log(Object? object,
       {String path = kDefaultPath, LogLevel level = LogLevel.info}) async {
     if (object == null) return;
     String log;
@@ -49,11 +89,11 @@ class LogUtil {
     }
   }
 
-  static Future _log2File(
+  Future _log2File(
       String path, LogLevel level, DateTime dateTime, String log) async {
-    var logLevelDir = await _getLogPathLevelDir(path, level);
+    var logLevelPath = (await _getLogPathLevelDir(path, level)).path;
     var logFileName = formatDate(dateTime, [yyyy, mm, dd, kHH]);
-    var logFile = File(join(logLevelDir.path, '${logFileName}00.log'));
+    var logFile = File(join(logLevelPath, '${logFileName}00$kLogFileSuffix'));
     if (!logFile.existsSync()) {
       logFile.createSync();
       var logFileHeader = _logFileHeader;
@@ -68,11 +108,11 @@ class LogUtil {
     );
   }
 
-  static void logE(Object? object, {String path = kDefaultPath}) {
+  void logE(Object? object, {String path = kDefaultPath}) {
     log(object, path: path, level: LogLevel.error);
   }
 
-  static Future<Directory> getLogRootDir() async {
+  Future<Directory> getLogRootDir() async {
     Directory? dir;
     if (Platform.isAndroid) {
       var externalStorageDir = await getExternalStorageDirectory();
@@ -86,8 +126,7 @@ class LogUtil {
     return logRootDir;
   }
 
-  static Future<Directory> _getLogPathLevelDir(
-      String path, LogLevel level) async {
+  Future<Directory> _getLogPathLevelDir(String path, LogLevel level) async {
     var logRootDir = await getLogRootDir();
     Directory logDir = Directory(join(logRootDir.path, path, level.name));
     if (!logDir.existsSync()) logDir.createSync(recursive: true);
