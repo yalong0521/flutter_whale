@@ -40,7 +40,7 @@ class LogUtil {
       if (split.length != 2) return;
       final datetime = _tryParseDatetime(split.first);
       if (datetime == null) return;
-      if (DateTime.now().difference(datetime).inDays >= 3) {
+      if (DateTime.now().difference(datetime).inDays >= 7) {
         log('日志文件过期清除===>$baseName');
         file.deleteSync();
       }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-extension IterbleExt<E> on Iterable<E> {
+extension IterableExt<E> on Iterable<E> {
   E? firstWhereOrNull(bool Function(E element) test) {
     for (E element in this) {
       if (test(element)) return element;

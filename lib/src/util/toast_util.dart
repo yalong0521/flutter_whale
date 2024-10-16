@@ -21,7 +21,7 @@ class ToastUtil {
 
   /// 最常用的方式，单独提供一个方法
   static void show(String text) =>
-      showImmediately(appConfig.toastConfig?.toast?.call(text) ?? Toast(text));
+      showImmediately(appConfig.toastBuilder?.call(text) ?? Toast(text));
 
   /// 按顺序显示，即等待前面的都显示完(如果有的话)再显示当前的
   static void showInOrder(Toast toast) => _showByYourself(toast, false);
@@ -110,34 +110,26 @@ class ToastUtil {
     return OverlayEntry(
       builder: (_) => AnimatedBuilder(
         animation: anim,
-        builder: (context, child) => Opacity(
-          opacity: anim.value,
-          child: child,
-        ),
+        builder: (context, child) => Opacity(opacity: anim.value, child: child),
         child: IgnorePointer(
-          child: Align(
-            alignment: toast.gravity,
-            child: _toastBuilder(toast.text),
-          ),
+          child: Align(alignment: toast.gravity, child: _toastBuilder(toast)),
         ),
       ),
     );
   }
 
-  static Widget Function(String text) get _toastBuilder {
-    var builder = appConfig.toastConfig?.builder;
-    if (builder != null) return builder;
-    return (text) {
-      return Container(
-        margin: EdgeInsets.symmetric(horizontal: 15.w, vertical: 50.w),
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.w),
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.7),
-          borderRadius: BorderRadius.circular(8.w),
-        ),
-        child: AppText(text, size: 14.w, color: Colors.white),
-      );
-    };
+  static Widget _toastBuilder(Toast toast) {
+    var builder = toast.builder;
+    if (builder != null) return builder(toast.text);
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 15.w, vertical: 50.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.w),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.7),
+        borderRadius: BorderRadius.circular(8.w),
+      ),
+      child: AppText(toast.text, size: 14.w, color: Colors.white),
+    );
   }
 
   static CurvedAnimation _getToastCurve(Animation<double> parent) {
@@ -149,11 +141,13 @@ class ToastUtil {
 class Toast {
   String text;
   AlignmentDirectional gravity;
+  Widget Function(String text)? builder;
   ToastState? toastState;
 
   Toast(
     this.text, {
     this.gravity = AlignmentDirectional.center,
+    this.builder,
     this.toastState,
   });
 }

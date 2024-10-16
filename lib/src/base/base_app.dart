@@ -13,7 +13,7 @@ AppConfig get appConfig => Provider.of<AppConfig>(baseContext, listen: false);
 final GlobalKey<NavigatorState> _baseKey = GlobalKey<NavigatorState>();
 
 class AppConfig extends ChangeNotifier {
-  ToastConfig? toastConfig;
+  ToastBuilder? toastBuilder;
   ValueGetter<double>? appTextDefaultSize;
   bool log2File;
   TransitionType pageTransitionType;
@@ -24,7 +24,7 @@ class AppConfig extends ChangeNotifier {
   double? scaleSizeUpperLimit;
 
   AppConfig({
-    this.toastConfig,
+    this.toastBuilder,
     this.appTextDefaultSize,
     required this.log2File,
     required this.pageTransitionType,
@@ -37,7 +37,7 @@ class AppConfig extends ChangeNotifier {
 
   void update({
     bool? newLog2File,
-    ToastConfig? newConfig,
+    ToastBuilder? newToastBuilder,
     ValueGetter<double>? newAppTextDefaultSize,
     TransitionType? newPageType,
     TransitionType? newDialogType,
@@ -47,7 +47,7 @@ class AppConfig extends ChangeNotifier {
     double? newScaleSizeUpperLimit,
   }) {
     if (newLog2File != null) log2File = newLog2File;
-    if (newConfig != toastConfig) toastConfig = newConfig;
+    if (newToastBuilder != toastBuilder) toastBuilder = newToastBuilder;
     if (newAppTextDefaultSize != null) {
       appTextDefaultSize = newAppTextDefaultSize;
     }
@@ -122,7 +122,7 @@ class BaseApp extends StatefulWidget {
   final BaseWidgetBuilder builder;
   final Size designSize;
   final bool log2File;
-  final ToastConfig? toastConfig;
+  final ToastBuilder? toastBuilder;
   final ValueGetter<double>? appTextDefaultSize;
   final TransitionType pageTransitionType;
   final TransitionType dialogTransitionType;
@@ -135,7 +135,7 @@ class BaseApp extends StatefulWidget {
     required this.builder,
     required this.designSize,
     this.log2File = false,
-    this.toastConfig,
+    this.toastBuilder,
     this.appTextDefaultSize,
     this.pageTransitionType = TransitionType.theme,
     this.dialogTransitionType = TransitionType.fade,
@@ -151,7 +151,7 @@ class BaseApp extends StatefulWidget {
 class _BaseAppState extends State<BaseApp> {
   late final AppConfig _appConfig = AppConfig(
     log2File: widget.log2File,
-    toastConfig: widget.toastConfig,
+    toastBuilder: widget.toastBuilder,
     appTextDefaultSize: widget.appTextDefaultSize,
     pageTransitionType: widget.pageTransitionType,
     dialogTransitionType: widget.dialogTransitionType,
@@ -174,7 +174,7 @@ class _BaseAppState extends State<BaseApp> {
     super.didUpdateWidget(oldWidget);
     _appConfig.update(
       newLog2File: widget.log2File,
-      newConfig: widget.toastConfig,
+      newToastBuilder: widget.toastBuilder,
       newAppTextDefaultSize: widget.appTextDefaultSize,
       newPageType: widget.pageTransitionType,
       newDialogType: widget.dialogTransitionType,
@@ -197,9 +197,4 @@ class LoadingConfig {
         barrierColor = barrierColor ?? Colors.black38;
 }
 
-class ToastConfig {
-  final Toast Function(String text)? toast;
-  final Widget Function(String text)? builder;
-
-  const ToastConfig({this.toast, this.builder});
-}
+typedef ToastBuilder = Toast Function(String text);
