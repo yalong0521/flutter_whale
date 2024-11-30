@@ -62,7 +62,10 @@ class LogsInterceptor extends Interceptor {
     List<String>? logList = _logs[options];
     logList?.add('请求异常: ${_errorToString(err)}');
     logList?.add('${'*' * 30}  HttpRequestEnd  ${'*' * 30}');
-    logger.logE(logList, path: kHttpClientLogPath);
+    // 取消请求导致的异常不进日志
+    if (err.type != DioExceptionType.cancel) {
+      logger.logE(logList, path: kHttpClientLogPath);
+    }
     _logs.remove(options);
     return super.onError(err, handler);
   }
