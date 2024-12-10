@@ -44,6 +44,8 @@ extension StringExt on String {
   }
 
   Color get color => Color(int.parse(this));
+
+  String prefix(String prefix) => '$prefix$this';
 }
 
 extension NullableStringExt on String? {
@@ -96,5 +98,17 @@ extension NullableStringExt on String? {
     final String? temp = this;
     if (temp == null || temp.isEmpty) return '';
     return num.tryParse(temp).removeTrailingZerosToString;
+  }
+
+  num get toNum {
+    final String? temp = this;
+    if (temp == null || temp.isEmpty) return 0;
+    return num.tryParse(temp) ?? 0;
+  }
+
+  int get toInt {
+    final String? temp = this;
+    if (temp == null || temp.isEmpty) return 0;
+    return num.tryParse(temp)?.toInt() ?? 0;
   }
 }

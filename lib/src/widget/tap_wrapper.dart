@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_whale/flutter_whale.dart';
 
@@ -17,7 +17,6 @@ class TapWrapper extends StatefulWidget {
   final Widget child;
   final GestureTapCallback onTap;
   final GestureLongPressCallback? onLongPress;
-  final double? pressedOpacity;
   final TapBehavior behavior;
   final int? milliseconds;
   final bool enable;
@@ -28,7 +27,6 @@ class TapWrapper extends StatefulWidget {
     required this.child,
     required this.onTap,
     this.onLongPress,
-    this.pressedOpacity,
     this.behavior = TapBehavior.throttle,
     this.milliseconds,
     this.enable = true,
@@ -52,22 +50,26 @@ class _TapWrapperState extends State<TapWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    Widget child = MouseRegion(
-      cursor: widget.enable
-          ? SystemMouseCursors.click
-          : SystemMouseCursors.forbidden,
-      child: widget.child,
-    );
+    Widget child = isMobile
+        ? widget.child
+        : MouseRegion(
+            cursor: widget.enable
+                ? SystemMouseCursors.click
+                : SystemMouseCursors.forbidden,
+            child: widget.child,
+            onEnter: (event) => _notifyOpacityChanged(0.6),
+            onExit: (event) => _notifyOpacityChanged(1),
+          );
     return widget.enable
         ? Focus(
             onFocusChange: (hasFocus) => setState(() => _hasFocus = hasFocus),
             onKeyEvent: (FocusNode node, KeyEvent event) {
               if (event.logicalKey == LogicalKeyboardKey.select) {
                 if (event is KeyDownEvent) {
-                  notifyOpacityChanged(true);
+                  _notifyOpacityChanged(0.4);
                   return KeyEventResult.handled;
                 } else if (event is KeyUpEvent) {
-                  notifyOpacityChanged(false);
+                  _notifyOpacityChanged(1);
                   _onTap();
                   return KeyEventResult.handled;
                 }
@@ -77,34 +79,31 @@ class _TapWrapperState extends State<TapWrapper> {
             child: widget.focusFeedbackEnable
                 ? AnimatedScale(
                     scale: _hasFocus ? 1.1 : 1,
-                    duration: const Duration(milliseconds: 200),
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => _onTap(),
-                      onLongPress: widget.onLongPress,
-                      onTapDown: (details) => notifyOpacityChanged(true),
-                      onTapUp: (details) => notifyOpacityChanged(false),
-                      onTapCancel: () => notifyOpacityChanged(false),
-                      child: Opacity(opacity: _pressOpacity, child: child),
-                    ),
+                    duration: kThemeAnimationDuration,
+                    child: _gestureDetector(child),
                   )
-                : GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => _onTap(),
-                    onLongPress: widget.onLongPress,
-                    onTapDown: (details) => notifyOpacityChanged(true),
-                    onTapUp: (details) => notifyOpacityChanged(false),
-                    onTapCancel: () => notifyOpacityChanged(false),
-                    child: Opacity(opacity: _pressOpacity, child: child),
-                  ),
+                : _gestureDetector(child),
           )
         : Opacity(opacity: 0.5, child: child);
   }
 
-  void notifyOpacityChanged(bool pressed) {
-    setState(() {
-      _pressOpacity = pressed ? widget.pressedOpacity ?? 0.5 : 1.0;
-    });
+  Widget _gestureDetector(Widget child) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => _onTap(),
+      onLongPress: widget.onLongPress,
+      onTapDown: (details) => _notifyOpacityChanged(0.4),
+      onTapUp: (details) => _notifyOpacityChanged(1),
+      onTapCancel: () => _notifyOpacityChanged(1),
+      child: AnimatedOpacity(
+          opacity: _pressOpacity,
+          duration: kThemeAnimationDuration,
+          child: child),
+    );
+  }
+
+  void _notifyOpacityChanged(double opacity) {
+    setState(() => _pressOpacity = opacity);
   }
 
   @override

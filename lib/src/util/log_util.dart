@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_whale/flutter_whale.dart';
-import 'package:path/path.dart';
 
 enum LogLevel {
   info,
@@ -112,19 +111,7 @@ class LogUtil {
     log(object, path: path, level: LogLevel.error);
   }
 
-  Future<Directory> getLogRootDir() async {
-    Directory? dir;
-    if (Platform.isAndroid) {
-      var externalStorageDir = await getExternalStorageDirectory();
-      if (externalStorageDir != null) dir = externalStorageDir;
-    } else if (Platform.isWindows) {
-      dir = await getApplicationSupportDirectory();
-    }
-    dir = dir ?? await getApplicationDocumentsDirectory();
-    var logRootDir = Directory(join(dir.path, 'logs'));
-    if (!logRootDir.existsSync()) logRootDir.createSync();
-    return logRootDir;
-  }
+  Future<Directory> getLogRootDir() => getAppDir('logs');
 
   Future<Directory> _getLogPathLevelDir(String path, LogLevel level) async {
     var logRootDir = await getLogRootDir();

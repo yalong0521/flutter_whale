@@ -1,6 +1,12 @@
+import 'dart:io';
+
+import 'flutter_whale.dart';
+
 export 'package:dio/dio.dart';
+export 'package:path/path.dart' hide context;
 export 'package:path_provider/path_provider.dart';
 export 'package:provider/provider.dart';
+export 'package:shared_preferences/shared_preferences.dart';
 export 'package:synchronized/synchronized.dart';
 
 export 'src/base/base_app.dart';
@@ -26,7 +32,9 @@ export 'src/util/date_util.dart';
 export 'src/util/dialog_util.dart';
 export 'src/util/keyboard_util.dart';
 export 'src/util/log_util.dart';
+export 'src/util/package_util.dart';
 export 'src/util/route_util.dart';
+export 'src/util/store_util.dart';
 export 'src/util/toast_util.dart';
 export 'src/util/transition_util.dart';
 export 'src/widget/app_text.dart';
@@ -39,3 +47,21 @@ export 'src/widget/nil.dart';
 export 'src/widget/no_padding_list_view.dart';
 export 'src/widget/spacer.dart';
 export 'src/widget/tap_wrapper.dart';
+
+Future<Directory> getAppDir([String? dirName]) async {
+  Directory? dir;
+  if (Platform.isAndroid) {
+    var externalStorageDir = await getExternalStorageDirectory();
+    if (externalStorageDir != null) dir = externalStorageDir;
+  } else if (Platform.isWindows) {
+    dir = await getApplicationSupportDirectory();
+  }
+  dir = dir ?? await getApplicationDocumentsDirectory();
+  final appName = PackageUtil.shared.appName;
+  var rootDir = Directory(join(dir.path, appName));
+  if (!rootDir.existsSync()) rootDir.createSync(recursive: true);
+  if (dirName == null) return rootDir;
+  var subDir = Directory(join(rootDir.path, dirName));
+  if (!subDir.existsSync()) subDir.createSync(recursive: true);
+  return subDir;
+}

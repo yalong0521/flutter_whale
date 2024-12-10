@@ -38,7 +38,7 @@ class ToastUtil {
         if (_previous!.toastState != null) {
           Toast reuse = _previous!;
           reuse.text = toast.text;
-          reuse.gravity = toast.gravity;
+          reuse.align = toast.align;
           var state = reuse.toastState!;
           state.dismissTimer?.cancel();
           state.animController.value = 0;
@@ -112,7 +112,7 @@ class ToastUtil {
         animation: anim,
         builder: (context, child) => Opacity(opacity: anim.value, child: child),
         child: IgnorePointer(
-          child: Align(alignment: toast.gravity, child: _toastBuilder(toast)),
+          child: Align(alignment: toast.align, child: _toastBuilder(toast)),
         ),
       ),
     );
@@ -140,13 +140,13 @@ class ToastUtil {
 /// 定义吐司类，方便后面扩展，带图片or自定义widget啥的
 class Toast {
   String text;
-  AlignmentDirectional gravity;
+  AlignmentGeometry align;
   Widget Function(String text)? builder;
   ToastState? toastState;
 
   Toast(
     this.text, {
-    this.gravity = AlignmentDirectional.center,
+    this.align = AlignmentDirectional.center,
     this.builder,
     this.toastState,
   });
