@@ -1,3 +1,3 @@
-# 1.3.0
+# 1.3.1
 
-## refactor
+## remove package_info

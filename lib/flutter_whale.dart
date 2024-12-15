@@ -32,7 +32,6 @@ export 'src/util/date_util.dart';
 export 'src/util/dialog_util.dart';
 export 'src/util/keyboard_util.dart';
 export 'src/util/log_util.dart';
-export 'src/util/package_util.dart';
 export 'src/util/route_util.dart';
 export 'src/util/store_util.dart';
 export 'src/util/toast_util.dart';
@@ -57,11 +56,9 @@ Future<Directory> getAppDir([String? dirName]) async {
     dir = await getApplicationSupportDirectory();
   }
   dir = dir ?? await getApplicationDocumentsDirectory();
-  final appName = PackageUtil.shared.appName;
-  var rootDir = Directory(join(dir.path, appName));
-  if (!rootDir.existsSync()) rootDir.createSync(recursive: true);
-  if (dirName == null) return rootDir;
-  var subDir = Directory(join(rootDir.path, dirName));
+  if (!dir.existsSync()) dir.createSync(recursive: true);
+  if (dirName == null) return dir;
+  var subDir = Directory(join(dir.path, dirName));
   if (!subDir.existsSync()) subDir.createSync(recursive: true);
   return subDir;
 }
