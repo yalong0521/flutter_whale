@@ -11,12 +11,18 @@ extension IterableExt<E> on Iterable<E> {
 
 extension ListExt<E> on List<E?> {
   List<E> removeNullValue() {
-    removeWhere((e) => e == null);
     final noneNullList = <E>[];
     for (var value in this) {
       if (value != null) noneNullList.add(value);
     }
     return noneNullList;
+  }
+
+  int? indexWhereOrNull(bool Function(E? element) test) {
+    for (int i = 0; i < length; i++) {
+      if (test(this[i])) return i;
+    }
+    return null;
   }
 }
 
