@@ -12,6 +12,7 @@ export 'package:synchronized/synchronized.dart';
 export 'src/base/base_app.dart';
 export 'src/base/base_model.dart';
 export 'src/base/base_page.dart';
+export 'src/ext/color_ext.dart';
 export 'src/ext/controller_ext.dart';
 export 'src/ext/date_time_ext.dart';
 export 'src/ext/formatter_ext.dart';

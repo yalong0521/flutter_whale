@@ -46,6 +46,23 @@ extension StringExt on String {
   Color get color => Color(int.parse(this));
 
   String prefix(String prefix) => '$prefix$this';
+
+  /// 颜色字符串转Color
+  Color get hexToColor {
+    String hexColor = this;
+    // 移除可能的 # 符号
+    hexColor = hexColor.replaceAll('#', '');
+    // 如果只有 6 位（不带 alpha），添加前缀 FF 作为 alpha 值
+    if (hexColor.length == 6) {
+      hexColor = 'FF$hexColor';
+    }
+    // 确保颜色值是 8 位 (AARRGGBB)
+    if (hexColor.length == 8) {
+      return Color(int.parse('0x$hexColor'));
+    }
+    // 如果输入格式不正确，抛出异常
+    throw const FormatException("Invalid hex color format");
+  }
 }
 
 extension NullableStringExt on String? {

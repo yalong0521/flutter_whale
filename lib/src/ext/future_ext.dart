@@ -9,3 +9,9 @@ extension FutureExt<T> on Future<T> {
     return result;
   }
 }
+
+extension Unwrap<T> on Future<T?> {
+  Future<T> unwrap() => then(
+        (value) => value != null ? Future<T>.value(value) : Future.any([]),
+      );
+}
