@@ -40,7 +40,7 @@ class LogUtil {
       final datetime = _tryParseDatetime(split.first);
       if (datetime == null) return;
       if (DateTime.now().difference(datetime).inDays >= 7) {
-        log('日志文件过期清除===>$baseName');
+        if (kDebugMode) print('日志文件过期清除===>$baseName');
         file.deleteSync();
       }
     } else if (FileSystemEntity.isDirectorySync(file.path)) {
