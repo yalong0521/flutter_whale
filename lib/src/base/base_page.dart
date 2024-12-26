@@ -107,6 +107,10 @@ abstract class BaseState<P extends BasePage, M extends BaseModel>
     );
   }
 
+  T select<T>(T Function(M model) selector) {
+    return context.select<M, T>(selector);
+  }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
