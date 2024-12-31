@@ -18,9 +18,11 @@ extension ListExt<E> on List<E?> {
     return noneNullList;
   }
 
-  int? indexWhereOrNull(bool Function(E? element) test) {
+  int? indexWhereOrNull(bool Function(E element) test) {
     for (int i = 0; i < length; i++) {
-      if (test(this[i])) return i;
+      var element = this[i];
+      if (element == null) continue;
+      if (test(element)) return i;
     }
     return null;
   }
