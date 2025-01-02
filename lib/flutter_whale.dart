@@ -37,6 +37,7 @@ export 'src/util/route_util.dart';
 export 'src/util/store_util.dart';
 export 'src/util/toast_util.dart';
 export 'src/util/transition_util.dart';
+export 'src/widget/app_expansion_panel.dart';
 export 'src/widget/app_text.dart';
 export 'src/widget/dash.dart';
 export 'src/widget/divider.dart';
