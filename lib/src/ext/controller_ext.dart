@@ -81,6 +81,10 @@ extension TextEditingControllerExt on TextEditingController {
       return;
     }
     final state = (widget.key as GlobalKey<EditableTextState>).currentState;
+    if (state?.widget.controller != this) {
+      element.visitChildren((element) => _visitor(element, value));
+      return;
+    }
     state?.userUpdateTextEditingValue(value, SelectionChangedCause.keyboard);
   }
 }
