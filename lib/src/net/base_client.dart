@@ -109,6 +109,7 @@ abstract class BaseClient {
     BuildContext? context,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
+    bool removeNullValue = true,
   }) async {
     return _request(
       'GET',
@@ -124,6 +125,7 @@ abstract class BaseClient {
       context: context,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
+      removeNullValue: removeNullValue,
     );
   }
 
@@ -141,6 +143,7 @@ abstract class BaseClient {
     BuildContext? context,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
+    bool removeNullValue = true,
   }) async {
     return _request(
       'POST',
@@ -157,6 +160,7 @@ abstract class BaseClient {
       context: context,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
+      removeNullValue: removeNullValue,
     );
   }
 
@@ -174,6 +178,7 @@ abstract class BaseClient {
     BuildContext? context,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
+    bool removeNullValue = true,
   }) async {
     return _request(
       'PUT',
@@ -190,6 +195,7 @@ abstract class BaseClient {
       context: context,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
+      removeNullValue: removeNullValue,
     );
   }
 
@@ -207,6 +213,7 @@ abstract class BaseClient {
     BuildContext? context,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
+    bool removeNullValue = true,
   }) async {
     return _request(
       'DELETE',
@@ -223,6 +230,7 @@ abstract class BaseClient {
       context: context,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,
+      removeNullValue: removeNullValue,
     );
   }
 
@@ -241,6 +249,7 @@ abstract class BaseClient {
     BuildContext? context,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
+    bool removeNullValue = true,
   }) async {
     if (showLoading) {
       DialogUtil.showLoading(text: loadingText, context: context);
@@ -248,11 +257,13 @@ abstract class BaseClient {
     parser = parser ?? (validData) => validData;
     options ??= Options();
     options.method = method;
-    if (data is Map) {
-      data.removeWhere((key, value) => value == null);
-    }
-    if (parameters != null) {
-      parameters.removeWhere((key, value) => value == null);
+    if (removeNullValue) {
+      if (data is Map) {
+        data.removeWhere((key, value) => value == null);
+      }
+      if (parameters != null) {
+        parameters.removeWhere((key, value) => value == null);
+      }
     }
     var response = await _dio
         .request(
