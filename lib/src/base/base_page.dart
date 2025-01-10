@@ -107,8 +107,8 @@ abstract class BaseState<P extends BasePage, M extends BaseModel>
     );
   }
 
-  T select<T>(T Function(M model) selector) {
-    return context.select<M, T>(selector);
+  T select<T>(T Function(M model) selector, {BuildContext? ctx}) {
+    return (ctx ?? context).select<M, T>(selector);
   }
 
   @override
