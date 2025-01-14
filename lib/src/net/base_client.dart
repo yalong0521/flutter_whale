@@ -4,21 +4,26 @@ import 'package:dio/io.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_whale/flutter_whale.dart';
 
-class BaseResponse<T> {
-  // 为true时data可能有值(有些业务场景没有数据是正常的)，为false时errorMsg肯定有值
-  final bool success;
+sealed class BaseResponse<T> {
+  bool get isSuccess => this is SuccessResponse;
+}
 
-  // 错误信息
-  final String? errorMsg;
-
-  // 请求成功结果
+class SuccessResponse<T> extends BaseResponse<T> {
+  /// 可能有值(有些业务场景没有数据是正常的)
   final T? data;
 
-  BaseResponse({
-    required this.success,
-    this.data,
-    this.errorMsg,
-  });
+  SuccessResponse([this.data]);
+}
+
+class ErrorResponse<T> extends BaseResponse<T> {
+  /// 错误码
+  final String? errorCode;
+
+  /// 错误信息
+  final String? errorMsg;
+
+  ErrorResponse({this.errorCode, String? errorMsg})
+      : errorMsg = errorMsg.notNullAndNotEmpty ? errorMsg : null;
 }
 
 abstract class BaseClient {
@@ -289,16 +294,19 @@ abstract class BaseClient {
       try {
         if (original) {
           // 不解析，返回原始数据
-          return BaseResponse(success: true, data: parser(response.data));
+          return SuccessResponse(parser(response.data));
         }
         return responseWrapper(response.data, parser, extra);
       } on TypeError catch (e) {
         logger.logE('${e.toString()}\n${e.stackTrace}',
             path: kHttpClientLogPath);
-        return BaseResponse(success: false, errorMsg: '数据解析异常');
+        return ErrorResponse(errorMsg: '数据解析异常');
       }
     } else {
-      return BaseResponse(success: false, errorMsg: response.statusMessage);
+      return ErrorResponse(
+        errorCode: response.statusCode?.toString(),
+        errorMsg: response.statusMessage,
+      );
     }
   }
 
