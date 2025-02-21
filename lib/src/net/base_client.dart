@@ -297,9 +297,8 @@ abstract class BaseClient {
           return SuccessResponse(parser(response.data));
         }
         return responseWrapper(response.data, parser, extra);
-      } on TypeError catch (e) {
-        logger.logE('${e.toString()}\n${e.stackTrace}',
-            path: kHttpClientLogPath);
+      } catch (e) {
+        logger.logE(e.toString(), path: kHttpClientLogPath);
         return ErrorResponse(errorMsg: '数据解析异常');
       }
     } else {
