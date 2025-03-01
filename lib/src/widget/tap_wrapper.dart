@@ -97,12 +97,13 @@ class _TapWrapperState extends State<TapWrapper> {
         _onTap();
       },
       onTapCancel: () => WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() => _pressOpacity = 1);
+        if (mounted) setState(() => _pressOpacity = 1);
       }),
       child: AnimatedOpacity(
-          opacity: _pressOpacity,
-          duration: kThemeAnimationDuration,
-          child: child),
+        opacity: _pressOpacity,
+        duration: kThemeAnimationDuration,
+        child: child,
+      ),
     );
   }
 
