@@ -25,6 +25,15 @@ extension TextEditingControllerExt on TextEditingController {
     }
   }
 
+  void add(String str, BuildContext? context) {
+    final newText = text + str;
+    TextEditingValue newValue = value.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+    context?.visitChildElements((element) => _visitor(element, newValue));
+  }
+
   void insert(String str, BuildContext? context) {
     var baseOffset = selection.baseOffset;
     baseOffset = baseOffset == -1 ? text.length : baseOffset;
