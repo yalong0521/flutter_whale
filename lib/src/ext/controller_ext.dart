@@ -50,7 +50,7 @@ extension TextEditingControllerExt on TextEditingController {
     context?.visitChildElements((element) => _visitor(element, newValue));
   }
 
-  void clearSelection(BuildContext? context) {
+  void clearSelection(BuildContext? context, {bool clearIfSelectNone = true}) {
     if (text.isEmpty) return;
     var baseOffset = selection.baseOffset;
     baseOffset = baseOffset == -1 ? text.length : baseOffset;
@@ -65,7 +65,7 @@ extension TextEditingControllerExt on TextEditingController {
         selection: TextSelection.collapsed(offset: start),
       );
     } else {
-      if (baseOffset == 0) return;
+      if (!clearIfSelectNone || baseOffset == 0) return;
       newValue = value.copyWith(
         text: (text.characters.toList()..removeRange(0, baseOffset)).join(),
         selection: const TextSelection.collapsed(offset: 0),
