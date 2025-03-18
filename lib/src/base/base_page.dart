@@ -75,7 +75,7 @@ abstract class BasePage<M extends BaseModel> extends StatefulWidget {
 }
 
 abstract class BaseState<P extends BasePage, M extends BaseModel>
-    extends State<P> with WidgetsBindingObserver {
+    extends AutoRefreshState<P> with WidgetsBindingObserver {
   M get model => Provider.of<M>(context, listen: false);
 
   @override

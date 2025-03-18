@@ -1,3 +1,4 @@
-# 2.0.5
+# 2.0.6
 
-## TextEditingControllerExt add add method
+## 日志拦截器新增请求响应开关控制
+## BaseState改为继承自AutoRefreshState
