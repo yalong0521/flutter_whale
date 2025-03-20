@@ -47,6 +47,10 @@ class StoreUtil {
     return _prefs.getString(key);
   }
 
+  bool containsKey(String key) {
+    return _prefs.containsKey(key);
+  }
+
   List<String>? getStringList(String key) {
     return _prefs.getStringList(key);
   }
