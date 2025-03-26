@@ -11,18 +11,21 @@ extension DateTimeExt on DateTime {
   }
 
   /// ---> 2023-11-29
-  String formatDateLine() => formatDate('-');
+  String get formatDateLine => formatDate('-');
 
   /// ---> 2023.11.29
-  String formatDatePoint() => formatDate('.');
+  String get formatDatePoint => formatDate('.');
+
+  /// ---> 2023/11/29
+  String get formatDateSplit => formatDate('/');
 
   /// ---> 10:58
-  String formatTime() {
+  String get formatTime {
     return f.formatDate(this, [f.kHH, ':', f.nn]);
   }
 
   /// ---> 10:58:28
-  String formatTimeFull() {
+  String get formatTimeFull {
     return f.formatDate(this, [f.kHH, ':', f.nn, ':', f.ss]);
   }
 
@@ -32,10 +35,10 @@ extension DateTimeExt on DateTime {
   }
 
   /// ---> 2023-11-29 10:58
-  String formatDateTimeLine() => formatDateTime('-');
+  String get formatDateTimeLine => formatDateTime('-');
 
   /// ---> 2023.11.29 10:58
-  String formatDateTimePoint() => formatDateTime('.');
+  String get formatDateTimePoint => formatDateTime('.');
 
   String formatDateTimeFull(String split) {
     return f.formatDate(this,
@@ -43,8 +46,11 @@ extension DateTimeExt on DateTime {
   }
 
   /// ---> 2023-11-29 10:58:28
-  String formatDateTimeFullLine() => formatDateTimeFull('-');
+  String get formatDateTimeFullLine => formatDateTimeFull('-');
 
   /// ---> 2023.11.29 10:58:28
-  String formatDateTimeFullPoint() => formatDateTimeFull('.');
+  String get formatDateTimeFullPoint => formatDateTimeFull('.');
+
+  /// ---> 2023/11/29 10:58:28
+  String get formatDateTimeFullSplit => formatDateTimeFull('/');
 }

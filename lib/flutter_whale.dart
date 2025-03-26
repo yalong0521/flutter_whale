@@ -48,6 +48,7 @@ export 'src/widget/fitted_text.dart';
 export 'src/widget/keep_alive_wrapper.dart';
 export 'src/widget/nil.dart';
 export 'src/widget/no_padding_list_view.dart';
+export 'src/widget/no_padding_single_child_scroll_view.dart';
 export 'src/widget/spacer.dart';
 export 'src/widget/tap_wrapper.dart';
 

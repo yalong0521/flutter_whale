@@ -13,13 +13,6 @@ class MainPage extends BasePage<MainModel> {
 }
 
 class _MainState extends BaseState<MainPage, MainModel> {
-  @required
-  @override
-  void initState() {
-    context.watch();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

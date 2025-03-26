@@ -1,65 +1,41 @@
 import 'package:flutter/widgets.dart';
 
-class NoPaddingListView extends StatelessWidget {
-  final NullableIndexedWidgetBuilder itemBuilder;
-  final IndexedWidgetBuilder? separatorBuilder;
-  final int itemCount;
-  final Axis? scrollDirection;
-  final bool removeBottom;
-  final bool removeLeft;
-  final bool removeTop;
-  final bool removeRight;
-  final ScrollController? controller;
-
-  const NoPaddingListView.builder({
+class NoPaddingListView extends ListView {
+  NoPaddingListView.builder({
     super.key,
-    required this.itemBuilder,
-    required this.itemCount,
-    this.scrollDirection,
-    this.removeBottom = true,
-    this.removeLeft = true,
-    this.removeTop = true,
-    this.removeRight = true,
-    this.controller,
-  }) : separatorBuilder = null;
-
-  const NoPaddingListView.separated({
-    super.key,
-    required this.itemBuilder,
-    required this.itemCount,
-    required IndexedWidgetBuilder this.separatorBuilder,
-    this.scrollDirection,
-    this.removeBottom = true,
-    this.removeLeft = true,
-    this.removeTop = true,
-    this.removeRight = true,
-    this.controller,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return MediaQuery.removePadding(
-      context: context,
-      removeBottom: removeBottom,
-      removeLeft: removeLeft,
-      removeTop: removeTop,
-      removeRight: removeRight,
-      child: _listView,
-    );
-  }
-
-  Widget get _listView => separatorBuilder != null
-      ? ListView.separated(
+    required NullableIndexedWidgetBuilder itemBuilder,
+    int? itemCount,
+    Axis scrollDirection = Axis.vertical,
+    bool shrinkWrap = false,
+    ScrollController? controller,
+    ScrollPhysics? physics,
+  }) : super.builder(
           itemBuilder: itemBuilder,
           itemCount: itemCount,
-          separatorBuilder: separatorBuilder!,
-          scrollDirection: scrollDirection ?? Axis.vertical,
+          padding: EdgeInsets.zero,
+          scrollDirection: scrollDirection,
+          shrinkWrap: shrinkWrap,
           controller: controller,
-        )
-      : ListView.builder(
+          physics: physics,
+        );
+
+  NoPaddingListView.separated({
+    super.key,
+    required NullableIndexedWidgetBuilder itemBuilder,
+    required IndexedWidgetBuilder separatorBuilder,
+    required int itemCount,
+    Axis scrollDirection = Axis.vertical,
+    bool shrinkWrap = false,
+    ScrollController? controller,
+    ScrollPhysics? physics,
+  }) : super.separated(
           itemBuilder: itemBuilder,
+          separatorBuilder: separatorBuilder,
           itemCount: itemCount,
-          scrollDirection: scrollDirection ?? Axis.vertical,
+          padding: EdgeInsets.zero,
+          scrollDirection: scrollDirection,
+          shrinkWrap: shrinkWrap,
           controller: controller,
+          physics: physics,
         );
 }
