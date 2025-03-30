@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_whale/flutter_whale.dart';
 
 abstract class BasePage<M extends BaseModel> extends StatefulWidget {
-  final bool refreshWhenDimensionsChange;
-
-  const BasePage({Key? key, this.refreshWhenDimensionsChange = true})
-      : super(key: key);
+  const BasePage({Key? key}) : super(key: key);
 
   M createModel(BuildContext context);
 
@@ -75,22 +72,15 @@ abstract class BasePage<M extends BaseModel> extends StatefulWidget {
 }
 
 abstract class BaseState<P extends BasePage, M extends BaseModel>
-    extends AutoRefreshState<P> with WidgetsBindingObserver {
+    extends AutoRefreshState<P> {
   M get model => Provider.of<M>(context, listen: false);
 
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (mounted) model.init();
     });
     super.initState();
-  }
-
-  @override
-  void didChangeMetrics() {
-    if (widget.refreshWhenDimensionsChange) setState(() {});
-    super.didChangeMetrics();
   }
 
   Selector<M, D> selector<D>({
@@ -109,11 +99,5 @@ abstract class BaseState<P extends BasePage, M extends BaseModel>
 
   T select<T>(T Function(M model) selector, {BuildContext? ctx}) {
     return (ctx ?? context).select<M, T>(selector);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
   }
 }
