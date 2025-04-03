@@ -104,6 +104,12 @@ class DialogTransition<T> extends RawDialogRoute<T> {
     return TransitionUtil.dialogTransition(
         type, _curve, animation, secondaryAnimation, child);
   }
+
+  @override
+  bool didPop(T? result) {
+    if (DialogUtil.loadingIsShowing) return false;
+    return super.didPop(result);
+  }
 }
 
 class DefaultLoadingDialog extends Dialog {
