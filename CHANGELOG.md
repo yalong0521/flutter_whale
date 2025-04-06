@@ -1,11 +1,15 @@
-# 2.0.7
+## 2.0.7
 
-## DateTimeExt&AutoRefreshState&NoPaddingListView&NoPaddingSingleChildScrollView
+- DateTimeExt&AutoRefreshState&NoPaddingListView&NoPaddingSingleChildScrollView
 
-# 2.0.8
+## 2.0.8
 
-## remove BasePage constructor param refreshWhenDimensionsChange
+- remove BasePage constructor param refreshWhenDimensionsChange
 
-# 2.0.9
+## 2.0.9
 
-## dialog didPop check loading dialog state
+- dialog didPop check loading dialog state
+
+## 2.1.0
+
+- new widget: AppPopup、AppTapper、AppVisibilityDetector、AutoSizeText、FreeWidthDialog、ResizeSwitch

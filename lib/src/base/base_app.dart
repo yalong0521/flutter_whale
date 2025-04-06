@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_whale/flutter_whale.dart';
 
 typedef BaseWidgetBuilder = Widget Function(
@@ -165,7 +166,7 @@ class _BaseAppState extends State<BaseApp> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AppConfig>(
       create: (BuildContext context) => _appConfig,
-      child: widget.builder(context, _baseKey),
+      child: Portal(child: widget.builder(context, _baseKey)),
     );
   }
 

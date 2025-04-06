@@ -292,12 +292,13 @@ abstract class BaseClient {
     );
     if (response.statusCode == 200) {
       try {
-        if (original) {
-          // 不解析，返回原始数据
-          return SuccessResponse(parser(response.data));
-        }
+        // 不解析，返回原始数据
+        if (original) return SuccessResponse(parser(response.data));
         return responseWrapper(response.data, parser, extra);
-      } catch (e) {
+      } on Error catch (e) {
+        logger.logE(e.stackTrace?.toString(), path: kHttpClientLogPath);
+        return ErrorResponse(errorMsg: '数据解析异常');
+      } on Exception catch (e) {
         logger.logE(e.toString(), path: kHttpClientLogPath);
         return ErrorResponse(errorMsg: '数据解析异常');
       }

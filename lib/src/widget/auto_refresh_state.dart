@@ -13,8 +13,9 @@ abstract class AutoRefreshState<T extends StatefulWidget> extends State<T>
   @override
   void didChangeMetrics() {
     super.didChangeMetrics();
-    final screenSize = MediaQuery.of(context).size;
-    if (appConfig.scaleSizeEnable || screenSize < appConfig.designSize) {
+    if (appConfig.scaleSizeEnable ||
+        screenWidth < appConfig.designSize.width ||
+        screenHeight < appConfig.designSize.height) {
       setState(() {});
     }
   }
