@@ -296,7 +296,10 @@ abstract class BaseClient {
         if (original) return SuccessResponse(parser(response.data));
         return responseWrapper(response.data, parser, extra);
       } on Error catch (e) {
-        logger.logE(e.stackTrace?.toString(), path: kHttpClientLogPath);
+        logger.logE(
+          '${e.toString()}${Platform.lineTerminator}${e.stackTrace?.toString()}',
+          path: kHttpClientLogPath,
+        );
         return ErrorResponse(errorMsg: '数据解析异常');
       } on Exception catch (e) {
         logger.logE(e.toString(), path: kHttpClientLogPath);

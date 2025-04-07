@@ -13,3 +13,7 @@
 ## 2.1.0
 
 - new widget: AppPopup、AppTapper、AppVisibilityDetector、AutoSizeText、FreeWidthDialog、ResizeSwitch
+
+## 2.1.1
+
+- Complete exception log
