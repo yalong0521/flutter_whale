@@ -3,6 +3,7 @@ import 'dart:io';
 import 'flutter_whale.dart';
 
 export 'package:dio/dio.dart';
+export 'package:flutter_portal/flutter_portal.dart';
 export 'package:path/path.dart' hide context;
 export 'package:path_provider/path_provider.dart';
 export 'package:provider/provider.dart';

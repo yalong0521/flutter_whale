@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_portal/flutter_portal.dart';
 import 'package:flutter_whale/flutter_whale.dart';
 
 class AppPopup extends StatefulWidget {
@@ -11,6 +10,9 @@ class AppPopup extends StatefulWidget {
   final PopupBgShape? popupBgShape;
   final PopupAlignment popupAlignment;
   final double? offset;
+  final bool popupVisible;
+  final bool outsideDismissible;
+  final List<PortalLabel<dynamic>> portalCandidateLabels;
 
   const AppPopup({
     required this.buttonViewBuilder,
@@ -19,6 +21,9 @@ class AppPopup extends StatefulWidget {
     this.popupBgShape,
     this.popupAlignment = PopupAlignment.bottomCenter,
     this.offset,
+    this.popupVisible = false,
+    this.outsideDismissible = true,
+    this.portalCandidateLabels = const [PortalLabel.main],
     super.key,
   });
 
@@ -29,7 +34,7 @@ class AppPopup extends StatefulWidget {
 class _AppPopupState extends State<AppPopup> {
   final GlobalKey _buttonKey = GlobalKey();
   final GlobalKey _popupKey = GlobalKey();
-  bool _visible = false;
+  late bool _visible = widget.popupVisible;
   late PopupAlignment _popupAlignment = widget.popupAlignment;
   bool _firstVisible = false;
   Size? _popupSize;
@@ -52,42 +57,31 @@ class _AppPopupState extends State<AppPopup> {
   Widget build(BuildContext context) {
     final buttonAlignment = _getButtonAlignment();
     final popupView = widget.popupViewBuilder(_dismissPopup);
-    return PortalTarget(
-      visible: _visible || !_firstVisible,
-      anchor: Aligned(
-        follower: buttonAlignment,
-        target: _getPopupAlignment(),
+    final animPopupView = TweenAnimationBuilder<double>(
+      curve: Curves.fastOutSlowIn,
+      duration: kThemeAnimationDuration,
+      tween: Tween(begin: 0, end: _visible ? 1 : 0),
+      builder: (context, progress, child) {
+        return widget.popupAnimator
+            .build(_popupSize ?? Size.zero, _popupAlignment, buttonAlignment,
+                progress, child!)
+            .padding(_getOffset());
+      },
+      child: Builder(
+        key: _popupKey,
+        builder: (context) {
+          final popupBgShape = widget.popupBgShape;
+          final buttonRect = _buttonRect ?? Rect.zero;
+          return popupBgShape != null
+              ? popupBgShape.build(_popupAlignment, buttonRect, popupView)
+              : popupView;
+        },
       ),
-      closeDuration: kThemeAnimationDuration,
-      portalFollower: TapRegion(
-        groupId: this,
-        onTapOutside: (event) => setState(() => _visible = false),
-        child: TweenAnimationBuilder<double>(
-          curve: Curves.fastOutSlowIn,
-          duration: kThemeAnimationDuration,
-          tween: Tween(begin: 0, end: _visible ? 1 : 0),
-          builder: (context, progress, child) {
-            return widget.popupAnimator
-                .build(_popupSize ?? Size.zero, _popupAlignment,
-                    buttonAlignment, progress, child!)
-                .padding(_getOffset());
-          },
-          child: Builder(
-            key: _popupKey,
-            builder: (context) {
-              final popupBgShape = widget.popupBgShape;
-              final buttonRect = _buttonRect ?? Rect.zero;
-              return popupBgShape != null
-                  ? popupBgShape.build(_popupAlignment, buttonRect, popupView)
-                  : popupView;
-            },
-          ),
-        ),
-      ),
-      child: TapRegion(
-        groupId: this,
-        key: _buttonKey,
-        child: widget.buttonViewBuilder(_visible, () {
+    );
+    final buttonView = Builder(
+      key: _buttonKey,
+      builder: (context) {
+        return widget.buttonViewBuilder(_visible, () {
           final visible = !_visible;
           final popupSize = _popupSize;
           if (visible && popupSize != null) {
@@ -98,8 +92,27 @@ class _AppPopupState extends State<AppPopup> {
             }
           }
           setState(() => _visible = visible);
-        }),
+        });
+      },
+    );
+    return PortalTarget(
+      visible: _visible || !_firstVisible,
+      portalCandidateLabels: widget.portalCandidateLabels,
+      anchor: Aligned(
+        follower: buttonAlignment,
+        target: _getPopupAlignment(),
       ),
+      closeDuration: kThemeAnimationDuration,
+      portalFollower: widget.outsideDismissible
+          ? TapRegion(
+              groupId: this,
+              onTapOutside: (event) => setState(() => _visible = false),
+              child: animPopupView,
+            )
+          : animPopupView,
+      child: widget.outsideDismissible
+          ? TapRegion(groupId: this, child: buttonView)
+          : buttonView,
     );
   }
 
@@ -290,6 +303,14 @@ class _AppPopupState extends State<AppPopup> {
         return EdgeInsets.only(left: _offset);
     }
   }
+
+  @override
+  void didUpdateWidget(covariant AppPopup oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.popupVisible != widget.popupVisible) {
+      setState(() => _visible = widget.popupVisible);
+    }
+  }
 }
 
 typedef ButtonViewBuilder = Widget Function(
@@ -303,14 +324,18 @@ abstract class PopupBgShape {
 class TwinkleBgShape extends PopupBgShape {
   final double triangleSize;
   final Color bgColor;
+  final double radius;
 
-  TwinkleBgShape({double? triangleSize, this.bgColor = Colors.white})
-      : triangleSize = triangleSize ?? 8.r;
+  TwinkleBgShape(
+      {double? triangleSize, this.bgColor = Colors.white, double? radius})
+      : triangleSize = triangleSize ?? 8.r,
+        radius = radius ?? 4.r;
 
   @override
   Widget build(PopupAlignment alignment, Rect buttonRect, Widget child) {
     return CustomPaint(
-      painter: _TwinkleBgPainter(bgColor, triangleSize, alignment, buttonRect),
+      painter: _TwinkleBgPainter(
+          bgColor, triangleSize, alignment, buttonRect, radius),
       child: Padding(padding: _getPadding(alignment), child: child),
     );
   }
@@ -430,8 +455,8 @@ class _TwinkleBgPainter extends CustomPainter {
     ..style = PaintingStyle.fill;
 
   _TwinkleBgPainter(this.color, this.triangle, this.alignment, this.buttonRect,
-      {double? diameter})
-      : diameter = diameter ?? 8.r;
+      double? radius)
+      : diameter = (radius ?? 4.r) * 2;
 
   @override
   void paint(Canvas canvas, Size size) {

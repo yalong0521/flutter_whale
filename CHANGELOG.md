@@ -17,3 +17,7 @@
 ## 2.1.1
 
 - Complete exception log
+
+## 2.1.2
+
+- AppPopup Optimize
