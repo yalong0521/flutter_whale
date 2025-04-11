@@ -21,3 +21,7 @@
 ## 2.1.2
 
 - AppPopup Optimize
+
+## 2.1.3
+
+- BaseClient support more param

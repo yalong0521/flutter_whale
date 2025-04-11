@@ -29,23 +29,28 @@ class ErrorResponse<T> extends BaseResponse<T> {
 abstract class BaseClient {
   late Dio _dio;
 
-  BaseClient() {
+  BaseClient({
+    required String baseUrl,
+    int timeout = 30,
+    String contentType = Headers.jsonContentType,
+    ResponseType responseType = ResponseType.json,
+    List<Interceptor>? interceptors,
+  }) {
     // 初始化dio
     _dio = Dio(BaseOptions(
       // 请求基地址,可以包含子路径
       baseUrl: baseUrl,
       // 连接服务器超时时间
-      connectTimeout: const Duration(seconds: 30),
+      connectTimeout: Duration(seconds: timeout),
       // 响应流上前后两次接受到数据的间隔
-      receiveTimeout: const Duration(seconds: 30),
+      receiveTimeout: Duration(seconds: timeout),
       // 请求的Content-Type，默认值是"application/json; charset=utf-8",Headers.formUrlEncodedContentType会自动编码请求体.
       contentType: contentType,
       // 表示期望以那种格式(方式)接受响应数据。接受四种类型 `json`, `stream`, `plain`, `bytes`. 默认值是 `json`,
-      responseType: ResponseType.json,
+      responseType: responseType,
     ));
     // 根据不同业务添加相应拦截器
-    final interceptorList = interceptors;
-    if (interceptorList != null) _dio.interceptors.addAll(interceptorList);
+    if (interceptors != null) _dio.interceptors.addAll(interceptors);
     // 配置适配器
     initAdapter();
   }
@@ -64,14 +69,6 @@ abstract class BaseClient {
       },
     );
   }
-
-  /// 根据客户端类型返回不同BaseUrl
-  String get baseUrl;
-
-  String? get contentType => Headers.jsonContentType;
-
-  /// 需要拦截数据进行处理就重写该方法
-  List<Interceptor>? get interceptors => null;
 
   /// 配置代理
   String Function(Uri url)? get proxy => null;
