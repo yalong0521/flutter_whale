@@ -49,7 +49,7 @@ class _AppPopupState extends State<AppPopup> {
       // 获取弹窗尺寸
       _popupSize = _getWidgetRect(_popupKey)?.size;
       // 获取到之后就隐藏
-      setState(() => _firstVisible = true);
+      if (mounted) setState(() => _firstVisible = true);
     });
   }
 

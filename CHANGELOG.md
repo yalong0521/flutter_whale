@@ -25,3 +25,7 @@
 ## 2.1.3
 
 - BaseClient support more param
+
+## 2.1.4
+
+- app_popup add mounted status check
