@@ -35,8 +35,9 @@ class AppTapper extends StatelessWidget {
     this.textStyle,
     this.shadowColor,
     this.elevation = 0,
+    bool enableThrottle = true,
   })  : child = enable ? child : Opacity(opacity: 0.6, child: child),
-        onTap = onTap.throttle();
+        onTap = enableThrottle ? onTap.throttle() : onTap;
 
   @override
   Widget build(BuildContext context) {

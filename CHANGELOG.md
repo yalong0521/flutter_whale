@@ -26,6 +26,10 @@
 
 - BaseClient support more param
 
-## 2.1.4
+## 2.1.5
 
 - app_popup add mounted status check
+
+## 2.1.5
+
+- app_tapper add param: enableThrottle
