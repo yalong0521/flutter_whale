@@ -175,7 +175,7 @@ class FreeWidthDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final DialogTheme dialogTheme = DialogTheme.of(context);
+    final dialogTheme = DialogTheme.of(context);
     final EdgeInsets effectivePadding =
         MediaQuery.viewInsetsOf(context) + (insetPadding ?? EdgeInsets.zero);
     final DialogTheme defaults = theme.useMaterial3

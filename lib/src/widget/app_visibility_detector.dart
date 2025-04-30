@@ -5,11 +5,13 @@ class AppVisibilityDetector extends StatefulWidget {
   /// 是否忽略第一次可见，如果忽略，第一次可见时不会回调onVisible
   final bool ignoreFirstVisible;
   final VoidCallback onVisible;
+  final VoidCallback? onInvisible;
   final Widget child;
 
   const AppVisibilityDetector({
     super.key,
     required this.onVisible,
+    this.onInvisible,
     this.ignoreFirstVisible = false,
     required this.child,
   });
@@ -37,6 +39,7 @@ class _AppVisibilityDetectorState extends State<AppVisibilityDetector> {
           _firstVisibleFlag = true;
         } else if (visibleFraction == 0) {
           _isVisible = false;
+          widget.onInvisible?.call();
         }
       },
       child: widget.child,

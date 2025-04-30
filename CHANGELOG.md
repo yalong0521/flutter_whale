@@ -33,3 +33,7 @@
 ## 2.1.5
 
 - app_tapper add param: enableThrottle
+
+## 2.1.6
+
+- AppVisibilityDetector add callback: onInvisible
