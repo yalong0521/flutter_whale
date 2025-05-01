@@ -37,3 +37,7 @@
 ## 2.1.6
 
 - AppVisibilityDetector add callback: onInvisible
+
+## 2.1.7
+
+- app_popup optimize

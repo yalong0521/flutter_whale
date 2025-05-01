@@ -55,6 +55,16 @@ class _AppPopupState extends State<AppPopup> {
 
   @override
   Widget build(BuildContext context) {
+    final visible = _visible || !_firstVisible;
+    final popupSize = _popupSize;
+    if (visible && popupSize != null) {
+      final buttonRect = _getWidgetRect(_buttonKey);
+      if (buttonRect != null) {
+        _buttonRect = buttonRect;
+        _popupAlignment = _reverseIfNotEnough(popupSize, buttonRect);
+      }
+    }
+
     final buttonAlignment = _getButtonAlignment();
     final popupView = widget.popupViewBuilder(_dismissPopup);
     final animPopupView = TweenAnimationBuilder<double>(
@@ -82,21 +92,12 @@ class _AppPopupState extends State<AppPopup> {
       key: _buttonKey,
       builder: (context) {
         return widget.buttonViewBuilder(_visible, () {
-          final visible = !_visible;
-          final popupSize = _popupSize;
-          if (visible && popupSize != null) {
-            final buttonRect = _getWidgetRect(_buttonKey);
-            if (buttonRect != null) {
-              _buttonRect = buttonRect;
-              _popupAlignment = _reverseIfNotEnough(popupSize, buttonRect);
-            }
-          }
-          setState(() => _visible = visible);
+          setState(() => _visible = !_visible);
         });
       },
     );
     return PortalTarget(
-      visible: _visible || !_firstVisible,
+      visible: visible,
       portalCandidateLabels: widget.portalCandidateLabels,
       anchor: Aligned(
         follower: buttonAlignment,
