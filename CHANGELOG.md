@@ -41,3 +41,7 @@
 ## 2.1.7
 
 - app_popup optimize
+
+## 2.1.8
+
+- performance optimization
