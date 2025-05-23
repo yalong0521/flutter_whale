@@ -30,7 +30,6 @@ abstract class BaseClient {
   late Dio _dio;
 
   BaseClient({
-    required String baseUrl,
     int timeout = 30,
     String contentType = Headers.jsonContentType,
     ResponseType responseType = ResponseType.json,
@@ -38,8 +37,6 @@ abstract class BaseClient {
   }) {
     // 初始化dio
     _dio = Dio(BaseOptions(
-      // 请求基地址,可以包含子路径
-      baseUrl: baseUrl,
       // 连接服务器超时时间
       connectTimeout: Duration(seconds: timeout),
       // 响应流上前后两次接受到数据的间隔
@@ -55,9 +52,7 @@ abstract class BaseClient {
     initAdapter();
   }
 
-  void resetBaseUrl(String url) {
-    _dio.options.baseUrl = url;
-  }
+  String get baseUrl;
 
   void initAdapter() {
     _dio.httpClientAdapter = IOHttpClientAdapter(
@@ -269,7 +264,7 @@ abstract class BaseClient {
     }
     var response = await _dio
         .request(
-      path,
+      path.startsWith('http') ? path : '$baseUrl$path',
       data: data,
       queryParameters: parameters,
       cancelToken: cancelToken,
@@ -279,11 +274,23 @@ abstract class BaseClient {
     )
         .then(
       (response) {
-        if (showLoading) DialogUtil.hideLoading(context: context);
+        if (showLoading) {
+          if (context == null) {
+            DialogUtil.hideLoading();
+          } else if (context.mounted) {
+            DialogUtil.hideLoading(context: context);
+          }
+        }
         return response;
       },
       onError: (e) {
-        if (showLoading) DialogUtil.hideLoading(context: context);
+        if (showLoading) {
+          if (context == null) {
+            DialogUtil.hideLoading();
+          } else if (context.mounted) {
+            DialogUtil.hideLoading(context: context);
+          }
+        }
         return _onError(e);
       },
     );

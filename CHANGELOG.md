@@ -45,3 +45,7 @@
 ## 2.1.8
 
 - performance optimization
+
+## 2.1.9
+
+- Optimized the BaseUrl passing mechanism.
