@@ -22,7 +22,10 @@ class ErrorResponse<T> extends BaseResponse<T> {
   /// 错误信息
   final String? errorMsg;
 
-  ErrorResponse({this.errorCode, String? errorMsg})
+  /// 错误数据
+  final dynamic data;
+
+  ErrorResponse({this.errorCode, String? errorMsg, this.data})
       : errorMsg = errorMsg.notNullAndNotEmpty ? errorMsg : null;
 }
 

@@ -49,3 +49,7 @@
 ## 2.1.9
 
 - Optimized the BaseUrl passing mechanism.
+
+## 2.2.0
+
+- ErrorResponse add data filed.
