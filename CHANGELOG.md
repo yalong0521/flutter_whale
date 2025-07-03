@@ -53,3 +53,7 @@
 ## 2.2.0
 
 - ErrorResponse add data filed.
+
+## 2.2.1
+
+- AppTapper add disableColor filed.

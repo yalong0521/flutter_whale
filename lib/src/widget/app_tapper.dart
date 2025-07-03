@@ -5,6 +5,7 @@ class AppTapper extends StatelessWidget {
   final Widget child;
   final VoidCallback onTap;
   final Color? color;
+  final Color? disableColor;
   final bool? circleShape;
   final BorderRadiusGeometry borderRadius;
   final BorderSide? borderSide;
@@ -23,6 +24,7 @@ class AppTapper extends StatelessWidget {
     required Widget child,
     required VoidCallback onTap,
     this.color,
+    this.disableColor,
     this.size,
     this.minimumSize,
     this.maximumSize,
@@ -65,9 +67,10 @@ class AppTapper extends StatelessWidget {
             ? const CircleBorder()
             : RoundedRectangleBorder(borderRadius: borderRadius),
         backgroundColor: bgColor,
-        disabledBackgroundColor: bgColor == Colors.transparent
-            ? bgColor
-            : Color.lerp(bgColor, disableLerp, disableOpacity),
+        disabledBackgroundColor: disableColor ??
+            (bgColor == Colors.transparent
+                ? bgColor
+                : Color.lerp(bgColor, disableLerp, disableOpacity)),
       ).copyWith(
         overlayColor: _OverlayColorProperty(contrastColor(bgColor)),
       ),
@@ -92,7 +95,7 @@ class _OverlayColorProperty extends MaterialStateProperty<Color> {
 
   @override
   Color resolve(Set<MaterialState> states) {
-    return color.withOpacity(0.05);
+    return color.withAlpha(13);
   }
 }
 

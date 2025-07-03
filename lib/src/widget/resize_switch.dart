@@ -440,7 +440,7 @@ class _AppSwitchState extends State<AppSwitch> with TickerProviderStateMixin {
             // color pickers on the switches in the macOS settings.
             focusColor: CupertinoDynamicColor.resolve(
                 widget.focusColor ??
-                    HSLColor.fromColor(activeColor.withOpacity(0.80))
+                    HSLColor.fromColor(activeColor.withAlpha(204))
                         .withLightness(0.69)
                         .withSaturation(0.835)
                         .toColor(),
@@ -784,13 +784,13 @@ class _RenderAppSwitch extends RenderConstrainedBox {
         height: _kOnLabelHeight,
       );
       final Paint onLabelPaint = Paint()
-        ..color = onLabelColor.withOpacity(onLabelOpacity)
+        ..color = onLabelColor.withAlpha((onLabelOpacity * 255).round())
         ..style = PaintingStyle.fill;
       canvas.drawRect(onLabelRect, onLabelPaint);
 
       // Draws 'O' label
       final Paint offLabelPaint = Paint()
-        ..color = offLabelColor.withOpacity(offLabelOpacity)
+        ..color = offLabelColor.withAlpha((offLabelOpacity * 255).round())
         ..style = PaintingStyle.stroke
         ..strokeWidth = _kOffLabelWidth;
       canvas.drawCircle(

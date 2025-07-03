@@ -1,7 +1,8 @@
 import 'package:flutter/services.dart';
 
 /// 任意2位小数类型，可为0
-final _doubleExp = RegExp(r'^(?!0\d|\d*\.\d{3,}|^\.)((0|[1-9]\d*)(\.\d{0,2})?)?$');
+final _doubleExp =
+    RegExp(r'^(?!0\d|\d*\.\d{3,}|^\.)((0|[1-9]\d*)(\.\d{0,2})?)?$');
 
 /// 1位任意数字
 final _singleNumExp = RegExp(r'^([0-9])?$');

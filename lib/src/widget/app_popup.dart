@@ -485,7 +485,7 @@ class _TwinkleBgPainter extends CustomPainter {
         break;
     }
 
-    canvas.drawShadow(path, Colors.black.withOpacity(0.6), 6.r, true);
+    canvas.drawShadow(path, Colors.black.withAlpha(153), 6.r, true);
     canvas.drawPath(path, _paint);
   }
 

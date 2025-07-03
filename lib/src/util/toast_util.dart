@@ -125,7 +125,7 @@ class ToastUtil {
       margin: EdgeInsets.symmetric(horizontal: 15.w, vertical: 50.w),
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.w),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.7),
+        color: Colors.black.withAlpha(178),
         borderRadius: BorderRadius.circular(8.w),
       ),
       child: AppText(toast.text, size: 14.w, color: Colors.white),
