@@ -57,7 +57,7 @@ class _TapWrapperState extends State<TapWrapper> {
                 ? SystemMouseCursors.click
                 : SystemMouseCursors.forbidden,
             child: widget.child,
-            onEnter: (event) => _notifyOpacityChanged(0.9),
+            onEnter: (event) => _notifyOpacityChanged(0.8),
             onExit: (event) => _notifyOpacityChanged(1),
           );
     return widget.enable
@@ -66,7 +66,7 @@ class _TapWrapperState extends State<TapWrapper> {
             onKeyEvent: (FocusNode node, KeyEvent event) {
               if (event.logicalKey == LogicalKeyboardKey.select) {
                 if (event is KeyDownEvent) {
-                  _notifyOpacityChanged(0.8);
+                  _notifyOpacityChanged(0.4);
                   return KeyEventResult.handled;
                 } else if (event is KeyUpEvent) {
                   _notifyOpacityChanged(1);
@@ -91,7 +91,7 @@ class _TapWrapperState extends State<TapWrapper> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onLongPress: widget.onLongPress,
-      onTapDown: (details) => _notifyOpacityChanged(0.8),
+      onTapDown: (details) => _notifyOpacityChanged(0.4),
       onTapUp: (details) {
         _notifyOpacityChanged(1);
         _onTap();

@@ -57,3 +57,8 @@
 ## 2.2.1
 
 - AppTapper add disableColor filed.
+
+## 2.2.2
+
+- Optimize button touch feedback effect;
+- Add focus state handling to the loading popup;

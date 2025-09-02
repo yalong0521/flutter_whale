@@ -28,6 +28,7 @@ class DialogUtil {
       }
       var config = appConfig.loadingConfig;
       var overlayState = Navigator.of(ctx).overlay;
+      FocusScope.of(ctx).unfocus();
       var entry = OverlayEntry(
         builder: (_) => AbsorbPointer(
           child: Stack(
@@ -49,6 +50,7 @@ class DialogUtil {
     if (loadingOverlay == null) return;
     loadingOverlay.entry.remove();
     _loadingOverlayMap.remove(ctx);
+    FocusScope.of(ctx).requestFocus();
   }
 
   static Future<T?> showDialog<T>(
