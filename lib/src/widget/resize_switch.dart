@@ -18,27 +18,31 @@ import 'package:flutter_whale/flutter_whale.dart';
 class ResizeSwitch extends StatelessWidget {
   final bool value;
   final ValueChanged<bool>? onChanged;
+  final bool enable;
   final double? size;
 
   const ResizeSwitch(
-      {required this.value, required this.onChanged, this.size, super.key});
+      {required this.value,
+      required this.onChanged,
+      this.enable = true,
+      this.size,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
     double rSize = size ?? 38.r;
     double scale = rSize / 59;
-    return SizedBox(
+    var sizedBox = SizedBox(
       width: rSize,
       height: 35.4 / 59 * rSize,
       child: Transform.scale(
         scale: scale,
-        child: AppSwitch(
-          value: value,
-          onChanged: onChanged,
-          applyTheme: true,
-        ),
+        child: AppSwitch(value: value, onChanged: onChanged, applyTheme: true),
       ),
     );
+    return enable
+        ? sizedBox
+        : AbsorbPointer(child: Opacity(opacity: 0.5, child: sizedBox));
   }
 }
 

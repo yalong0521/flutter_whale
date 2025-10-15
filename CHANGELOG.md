@@ -62,3 +62,7 @@
 
 - Optimize button touch feedback effect;
 - Add focus state handling to the loading popup;
+
+## 2.2.3
+
+- ResizeSwitch supports passing in an enabled state;
