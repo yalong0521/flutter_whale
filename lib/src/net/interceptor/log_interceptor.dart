@@ -2,14 +2,15 @@ import 'dart:convert';
 
 import 'package:flutter_whale/flutter_whale.dart';
 
+const _startTimeKey = 'start_time';
+const _logListKey = 'log_list';
+
 /// Log 拦截器
 class LogsInterceptor extends Interceptor {
   final bool printRequest;
   final bool printResponse;
 
   LogsInterceptor({this.printRequest = true, this.printResponse = true});
-
-  final Map<RequestOptions, List<String>> _logs = {};
 
   @override
   onRequest(RequestOptions options, handler) async {
@@ -35,50 +36,63 @@ class LogsInterceptor extends Interceptor {
         }
       }
     }
-    _logs[options] = logList;
+    options.extra[_startTimeKey] = DateTime.now();
+    options.extra[_logListKey] = logList;
     return super.onRequest(options, handler);
   }
 
   @override
   onResponse(Response response, handler) async {
     final options = response.requestOptions;
-    List<String>? logList = _logs[options];
-    if (printResponse) {
-      final responseType = response.requestOptions.responseType;
-      switch (responseType) {
-        case ResponseType.json:
-          logList?.add('返回数据(json): ${jsonEncode(response.data)}');
-          break;
-        case ResponseType.stream:
-          logList?.add('返回数据(stream): (${response.data.runtimeType})');
-          break;
-        case ResponseType.plain:
-          logList?.add('返回数据(plain): ${response.data}');
-          break;
-        case ResponseType.bytes:
-          logList?.add('返回数据(bytes): ${response.data}');
-          break;
+    final logList = options.extra[_logListKey];
+    if (logList is List<String>) {
+      final startTime = options.extra[_startTimeKey];
+      if (startTime is DateTime) {
+        final duration = DateTime.now().difference(startTime);
+        logList.add('请求耗时: ${duration.inMilliseconds}ms');
       }
-      logList?.add('${'*' * 30}  HttpRequestEnd  ${'*' * 30}');
+      if (printResponse) {
+        final responseType = response.requestOptions.responseType;
+        switch (responseType) {
+          case ResponseType.json:
+            logList.add('返回数据(json): ${jsonEncode(response.data)}');
+            break;
+          case ResponseType.stream:
+            logList.add('返回数据(stream): (${response.data.runtimeType})');
+            break;
+          case ResponseType.plain:
+            logList.add('返回数据(plain): ${response.data}');
+            break;
+          case ResponseType.bytes:
+            logList.add('返回数据(bytes): ${response.data}');
+            break;
+        }
+        logList.add('${'*' * 30}  HttpRequestEnd  ${'*' * 30}');
+      }
+      if (logList.notNullAndNotEmpty) {
+        logger.log(logList, path: kHttpClientLogPath);
+      }
     }
-    if (logList.notNullAndNotEmpty) {
-      logger.log(logList, path: kHttpClientLogPath);
-    }
-    _logs.remove(options);
     return super.onResponse(response, handler);
   }
 
   @override
   onError(err, handler) async {
     final options = err.requestOptions;
-    List<String>? logList = _logs[options];
-    logList?.add('请求异常: ${_errorToString(err)}');
-    logList?.add('${'*' * 30}  HttpRequestEnd  ${'*' * 30}');
-    // 取消请求导致的异常不进日志
-    if (err.type != DioExceptionType.cancel) {
-      logger.logE(logList, path: kHttpClientLogPath);
+    final logList = options.extra[_logListKey];
+    if (logList is List<String>) {
+      final startTime = options.extra[_startTimeKey];
+      if (startTime is DateTime) {
+        final duration = DateTime.now().difference(startTime);
+        logList.add('请求耗时: ${duration.inMilliseconds}ms');
+      }
+      logList.add('请求异常: ${_errorToString(err)}');
+      logList.add('${'*' * 30}  HttpRequestEnd  ${'*' * 30}');
+      // 取消请求导致的异常不进日志
+      if (err.type != DioExceptionType.cancel) {
+        logger.logE(logList, path: kHttpClientLogPath);
+      }
     }
-    _logs.remove(options);
     return super.onError(err, handler);
   }
 

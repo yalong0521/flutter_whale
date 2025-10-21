@@ -66,3 +66,7 @@
 ## 2.2.3
 
 - ResizeSwitch supports passing in an enabled state;
+
+## 2.2.4
+
+- Add network request duration output to the log;
