@@ -13,6 +13,7 @@ class AppPopup extends StatefulWidget {
   final bool popupVisible;
   final bool outsideDismissible;
   final List<PortalLabel<dynamic>> portalCandidateLabels;
+  final ValueChanged<bool>? onPopupVisibleChanged;
 
   const AppPopup({
     required this.buttonViewBuilder,
@@ -24,6 +25,7 @@ class AppPopup extends StatefulWidget {
     this.popupVisible = false,
     this.outsideDismissible = true,
     this.portalCandidateLabels = const [PortalLabel.main],
+    this.onPopupVisibleChanged,
     super.key,
   });
 
@@ -93,6 +95,7 @@ class _AppPopupState extends State<AppPopup> {
       builder: (context) {
         return widget.buttonViewBuilder(_visible, () {
           setState(() => _visible = !_visible);
+          widget.onPopupVisibleChanged?.call(_visible);
         });
       },
     );
@@ -107,7 +110,10 @@ class _AppPopupState extends State<AppPopup> {
       portalFollower: widget.outsideDismissible
           ? TapRegion(
               groupId: this,
-              onTapOutside: (event) => setState(() => _visible = false),
+              onTapOutside: (event) {
+                setState(() => _visible = false);
+                widget.onPopupVisibleChanged?.call(_visible);
+              },
               child: animPopupView,
             )
           : animPopupView,
@@ -117,7 +123,10 @@ class _AppPopupState extends State<AppPopup> {
     );
   }
 
-  void _dismissPopup() => setState(() => _visible = false);
+  void _dismissPopup() {
+    setState(() => _visible = false);
+    widget.onPopupVisibleChanged?.call(_visible);
+  }
 
   Alignment _getButtonAlignment() {
     switch (_popupAlignment) {
@@ -310,6 +319,7 @@ class _AppPopupState extends State<AppPopup> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.popupVisible != widget.popupVisible) {
       setState(() => _visible = widget.popupVisible);
+      widget.onPopupVisibleChanged?.call(_visible);
     }
   }
 }

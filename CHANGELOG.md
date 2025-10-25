@@ -70,3 +70,7 @@
 ## 2.2.4
 
 - Add network request duration output to the log;
+
+## 2.2.5
+
+- app_popup component adds onPopupVisibleChanged callback;
