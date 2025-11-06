@@ -31,7 +31,6 @@ abstract class BasePage<M extends BaseModel> extends StatefulWidget {
     TransitionType? transition,
     bool? opaque,
     BuildContext? context,
-    String? name,
     required String offToName,
   }) {
     return RouteUtil.toOff<T>(

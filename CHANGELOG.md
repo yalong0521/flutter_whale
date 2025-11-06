@@ -60,17 +60,22 @@
 
 ## 2.2.2
 
-- Optimize button touch feedback effect;
-- Add focus state handling to the loading popup;
+- Optimize button touch feedback effect.
+- Add focus state handling to the loading popup.
 
 ## 2.2.3
 
-- ResizeSwitch supports passing in an enabled state;
+- ResizeSwitch supports passing in an enabled state.
 
 ## 2.2.4
 
-- Add network request duration output to the log;
+- Add network request duration output to the log.
 
 ## 2.2.5
 
-- app_popup component adds onPopupVisibleChanged callback;
+- app_popup component adds onPopupVisibleChanged callback.
+
+## 2.2.6
+
+- Add new transition type: ScaleFade.
+- Fix incorrect name parameter passing issue in BasePage.toOff method.

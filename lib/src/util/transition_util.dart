@@ -94,6 +94,14 @@ class TransitionUtil {
             child: child,
           ),
         );
+      case TransitionType.scaleFade:
+        return ScaleTransition(
+          scale: CurvedAnimation(parent: animation, curve: curve),
+          child: FadeTransition(
+            opacity: CurvedAnimation(parent: animation, curve: curve),
+            child: child,
+          ),
+        );
       case TransitionType.rotate:
         var curvedAnimation = CurvedAnimation(parent: animation, curve: curve);
         return RotationTransition(
@@ -166,6 +174,14 @@ class TransitionUtil {
             child: child,
           ),
         );
+      case TransitionType.scaleFade:
+        return ScaleTransition(
+          scale: CurvedAnimation(parent: animation, curve: curve),
+          child: FadeTransition(
+            opacity: CurvedAnimation(parent: animation, curve: curve),
+            child: child,
+          ),
+        );
       case TransitionType.rotate:
         var curvedAnimation = CurvedAnimation(parent: animation, curve: curve);
         return RotationTransition(
@@ -234,6 +250,9 @@ enum TransitionType {
 
   /// ScaleHorizontal animation
   scaleHorizontal,
+
+  /// ScaleFade animation
+  scaleFade,
 
   /// Rotate animation
   rotate,
