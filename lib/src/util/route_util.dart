@@ -90,11 +90,11 @@ class RouteUtil {
   }
 
   static void pop<T>({T? result, BuildContext? context}) {
-    return Navigator.of(context ?? baseContext).pop<T>(result);
+    Navigator.of(context ?? baseContext).pop<T>(result);
   }
 
   static void popUntil(RoutePredicate predicate, {BuildContext? context}) {
-    return Navigator.of(context ?? baseContext).popUntil(predicate);
+    Navigator.of(context ?? baseContext).popUntil(predicate);
   }
 }
 

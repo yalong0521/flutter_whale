@@ -79,3 +79,7 @@
 
 - Add new transition type: ScaleFade.
 - Fix incorrect name parameter passing issue in BasePage.toOff method.
+
+## 2.2.7
+
+- Bugfix.
