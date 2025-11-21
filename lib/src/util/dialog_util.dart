@@ -103,8 +103,7 @@ class DialogTransition<T> extends RawDialogRoute<T> {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    return TransitionUtil.dialogTransition(
-        type, _curve, animation, secondaryAnimation, child);
+    return TransitionUtil.dialogTransition(type, _curve, animation, child);
   }
 
   @override

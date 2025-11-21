@@ -13,6 +13,7 @@ abstract class BasePage<M extends BaseModel> extends StatefulWidget {
     bool clearStack = false,
     bool? opaque,
     BuildContext? context,
+    bool fullscreenDialog = false,
   }) {
     return RouteUtil.to<T>(
       ChangeNotifierProvider(create: createModel, child: this),
@@ -22,6 +23,7 @@ abstract class BasePage<M extends BaseModel> extends StatefulWidget {
       opaque: opaque ?? true,
       context: context,
       name: name,
+      fullscreenDialog: fullscreenDialog,
     );
   }
 

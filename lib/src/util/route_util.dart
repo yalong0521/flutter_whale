@@ -133,7 +133,7 @@ class PageTransition<T> extends PageRouteBuilder<T> {
     Widget child,
   ) {
     return TransitionUtil.pageTransition(
-        type, _curve, context, animation, secondaryAnimation, child, this);
+        type, _curve, context, animation, child, this);
   }
 
   @override

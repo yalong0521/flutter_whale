@@ -11,7 +11,6 @@ class TransitionUtil {
     Curve curve,
     BuildContext context,
     Animation<double> animation,
-    Animation<double> secondaryAnimation,
     Widget child,
     PageRoute pageRoute,
   ) {
@@ -25,7 +24,7 @@ class TransitionUtil {
           pageRoute,
           context,
           animation,
-          secondaryAnimation,
+          const AlwaysStoppedAnimation(0),
           child,
         );
       case TransitionType.fade:
@@ -46,7 +45,7 @@ class TransitionUtil {
                 pageRoute,
                 context,
                 animation,
-                secondaryAnimation,
+                const AlwaysStoppedAnimation(0),
                 child,
               );
       case TransitionType.leftToRight:
@@ -118,12 +117,11 @@ class TransitionUtil {
     TransitionType type,
     Curve curve,
     Animation<double> animation,
-    Animation<double> secondaryAnimation,
     Widget child,
   ) {
     switch (type) {
       case TransitionType.theme:
-        return _dialogTheme(animation, secondaryAnimation, child);
+        return _dialogTheme(animation, child);
       case TransitionType.fade:
         return FadeTransition(
           opacity: CurvedAnimation(parent: animation, curve: curve),
@@ -196,7 +194,6 @@ class TransitionUtil {
 
   static Widget _dialogTheme(
     Animation<double> animation,
-    Animation<double> secondaryAnimation,
     Widget child,
   ) {
     if (Platform.isIOS) {
