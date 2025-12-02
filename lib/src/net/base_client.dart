@@ -33,7 +33,8 @@ abstract class BaseClient {
   late Dio _dio;
 
   BaseClient({
-    int timeout = 30,
+    int connectTimeout = 5,
+    int receiveTimeout = 12,
     String contentType = Headers.jsonContentType,
     ResponseType responseType = ResponseType.json,
     List<Interceptor>? interceptors,
@@ -41,9 +42,9 @@ abstract class BaseClient {
     // 初始化dio
     _dio = Dio(BaseOptions(
       // 连接服务器超时时间
-      connectTimeout: Duration(seconds: timeout),
+      connectTimeout: Duration(seconds: connectTimeout),
       // 响应流上前后两次接受到数据的间隔
-      receiveTimeout: Duration(seconds: timeout),
+      receiveTimeout: Duration(seconds: receiveTimeout),
       // 请求的Content-Type，默认值是"application/json; charset=utf-8",Headers.formUrlEncodedContentType会自动编码请求体.
       contentType: contentType,
       // 表示期望以那种格式(方式)接受响应数据。接受四种类型 `json`, `stream`, `plain`, `bytes`. 默认值是 `json`,

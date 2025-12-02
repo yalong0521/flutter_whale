@@ -87,3 +87,7 @@
 ## 2.2.8
 
 - Optimize.
+
+## 2.2.9
+
+- Optimize.
