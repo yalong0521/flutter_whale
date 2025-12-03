@@ -53,7 +53,7 @@ class DialogUtil {
     FocusScope.of(ctx).requestFocus();
   }
 
-  static Future<T?> showDialog<T>(
+  static Future<T?> to<T>(
     WidgetBuilder builder, {
     TransitionType? transition,
     bool useSafeArea = true,
@@ -71,6 +71,29 @@ class DialogUtil {
         barrierDismissible: barrierDismissible,
         barrierColor: barrierColor,
       ),
+    );
+  }
+
+  static Future<T?> off<T, TO>(
+    WidgetBuilder builder, {
+    TransitionType? transition,
+    bool useSafeArea = true,
+    bool barrierDismissible = true,
+    Color barrierColor = Colors.black38,
+    Object? arguments,
+    BuildContext? context,
+    TO? result,
+  }) {
+    return Navigator.of(context ?? baseContext).pushReplacement<T, TO>(
+      DialogTransition(
+        builder: builder,
+        type: transition ?? appConfig.dialogTransitionType,
+        useSafeArea: useSafeArea,
+        arguments: arguments,
+        barrierDismissible: barrierDismissible,
+        barrierColor: barrierColor,
+      ),
+      result: result,
     );
   }
 }
