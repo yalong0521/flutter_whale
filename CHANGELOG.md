@@ -96,3 +96,7 @@
 
 - Renamed `showDialog` method to `to` for clarity
 - Added new `off` method for dialog replacement functionality
+
+## 2.3.1
+
+- Optimize.
