@@ -46,8 +46,8 @@ extension NullableListExt<T> on List<T>? {
   }
 }
 
-extension NoneNullListExt<T> on List<T> {
-  List<T> addSeparator<M>(T Function(int index) separatorBuilder) {
+extension NoneNullListExt on List {
+  List<T> addSeparator<T>(T Function(int index) separatorBuilder) {
     List<T> list = [];
     for (int i = 0; i < length; i++) {
       list.add(this[i]);
