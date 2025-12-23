@@ -9,7 +9,7 @@ abstract class AutoRefreshState<T extends StatefulWidget> extends State<T>
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (context.mounted) _viewSize = context.viewSize;
+      if (mounted) _viewSize = context.viewSize;
     });
     WidgetsBinding.instance.addObserver(this);
     super.initState();
