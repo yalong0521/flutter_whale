@@ -83,17 +83,40 @@ abstract class BaseClient {
       case DioExceptionType.receiveTimeout:
         return '响应超时';
       case DioExceptionType.badResponse:
-        return '请求异常';
+        final statusCode = exception.response?.statusCode;
+        switch (statusCode) {
+          case 400:
+            return '请求参数错误';
+          case 401:
+            return '登录已过期，请重新登录';
+          case 403:
+            return '没有操作权限';
+          case 404:
+            return '服务不存在';
+          case 500:
+            return '服务器异常，请稍后再试';
+          case 502:
+          case 503:
+            return '服务暂不可用，请稍后再试';
+          default:
+            return '请求失败（$statusCode）';
+        }
       case DioExceptionType.badCertificate:
-        return '无效证书';
+        return '网络安全校验失败';
       case DioExceptionType.cancel:
         return '请求取消';
       case DioExceptionType.unknown:
         final error = exception.error;
-        if (error is SocketException && error.osError?.errorCode == 65) {
-          return '无法连接网络，请稍后重试';
+        if (error is SocketException) {
+          return '网络不可用，请检查网络';
+        } else if (error is FormatException) {
+          return '数据解析失败';
+        } else if (error is HttpException) {
+          return '服务器响应异常，请稍后重试';
+        } else if (error is String) {
+          return error;
         }
-        return '网络异常';
+        return '未知错误，请稍后再试（${error.runtimeType}）';
     }
   }
 
