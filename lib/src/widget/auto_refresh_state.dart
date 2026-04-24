@@ -18,9 +18,10 @@ abstract class AutoRefreshState<T extends StatefulWidget> extends State<T>
   @override
   void didChangeMetrics() {
     super.didChangeMetrics();
-    if (appConfig.scaleSizeEnable ||
-        screenWidth < appConfig.designSize.width ||
-        screenHeight < appConfig.designSize.height) {
+    if ((appConfig.scaleSizeEnable ||
+            screenWidth < appConfig.designSize.width ||
+            screenHeight < appConfig.designSize.height) &&
+        context.mounted) {
       final viewSize = context.viewSize;
       if (viewSize != _viewSize) {
         _viewSize = viewSize;
