@@ -116,3 +116,10 @@
 ## 2.3.5
 
 - Optimize.
+
+## 2.3.6
+
+- 移除common_util.dart中的屏幕尺寸相关方法
+- 新增screen_util.dart文件实现ScreenUtil工具类
+- 使用FlutterView直接获取物理屏幕尺寸和安全区域
+- 更新flutter_whale.dart导出ScreenUtil并添加初始化方法

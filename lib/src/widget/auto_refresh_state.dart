@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_whale/flutter_whale.dart';
+import 'package:flutter_whale/src/util/screen_util.dart';
 
 /// Auto refresh when the application's dimensions change
 abstract class AutoRefreshState<T extends StatefulWidget> extends State<T>
@@ -19,8 +20,8 @@ abstract class AutoRefreshState<T extends StatefulWidget> extends State<T>
   void didChangeMetrics() {
     super.didChangeMetrics();
     if ((appConfig.scaleSizeEnable ||
-            screenWidth < appConfig.designSize.width ||
-            screenHeight < appConfig.designSize.height) &&
+            ScreenUtil.screenWidth < appConfig.designSize.width ||
+            ScreenUtil.screenHeight < appConfig.designSize.height) &&
         context.mounted) {
       final viewSize = context.viewSize;
       if (viewSize != _viewSize) {

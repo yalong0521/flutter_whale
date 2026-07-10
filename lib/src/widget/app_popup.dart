@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_whale/flutter_whale.dart';
+import 'package:flutter_whale/src/util/screen_util.dart';
 
 class AppPopup extends StatefulWidget {
   final ButtonViewBuilder buttonViewBuilder;
@@ -181,18 +182,19 @@ class _AppPopupState extends State<AppPopup> {
   /// 是否需要反转方向
   PopupAlignment _reverseIfNotEnough(Size popupSize, Rect buttonRect) {
     final bottomNeedReverse =
-        screenHeight - buttonRect.bottom - _offset < popupSize.height;
+        ScreenUtil.screenHeight - buttonRect.bottom - _offset <
+            popupSize.height;
     final topNeedReverse = buttonRect.top - _offset < popupSize.height;
     final startNeedReverse = buttonRect.left - _offset < popupSize.width;
     final endNeedReverse =
-        screenWidth - buttonRect.right - _offset < popupSize.width;
+        ScreenUtil.screenWidth - buttonRect.right - _offset < popupSize.width;
     switch (widget.popupAlignment) {
       case PopupAlignment.bottomCenter:
         return bottomNeedReverse
             ? PopupAlignment.topCenter
             : PopupAlignment.bottomCenter;
       case PopupAlignment.bottomStart:
-        if (screenWidth - buttonRect.left < popupSize.width) {
+        if (ScreenUtil.screenWidth - buttonRect.left < popupSize.width) {
           return bottomNeedReverse
               ? PopupAlignment.topEnd
               : PopupAlignment.bottomEnd;
@@ -216,7 +218,7 @@ class _AppPopupState extends State<AppPopup> {
             ? PopupAlignment.bottomCenter
             : PopupAlignment.topCenter;
       case PopupAlignment.topStart:
-        if (screenWidth - buttonRect.left < popupSize.width) {
+        if (ScreenUtil.screenWidth - buttonRect.left < popupSize.width) {
           return topNeedReverse
               ? PopupAlignment.bottomEnd
               : PopupAlignment.topEnd;
@@ -240,7 +242,7 @@ class _AppPopupState extends State<AppPopup> {
             ? PopupAlignment.rightCenter
             : PopupAlignment.leftCenter;
       case PopupAlignment.leftTop:
-        if (screenHeight - buttonRect.top < popupSize.height) {
+        if (ScreenUtil.screenHeight - buttonRect.top < popupSize.height) {
           return startNeedReverse
               ? PopupAlignment.rightBottom
               : PopupAlignment.leftBottom;
@@ -264,7 +266,7 @@ class _AppPopupState extends State<AppPopup> {
             ? PopupAlignment.leftCenter
             : PopupAlignment.rightCenter;
       case PopupAlignment.rightTop:
-        if (screenHeight - buttonRect.top < popupSize.height) {
+        if (ScreenUtil.screenHeight - buttonRect.top < popupSize.height) {
           return endNeedReverse
               ? PopupAlignment.leftBottom
               : PopupAlignment.rightBottom;

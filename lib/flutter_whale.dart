@@ -36,6 +36,7 @@ export 'src/util/dialog_util.dart';
 export 'src/util/keyboard_util.dart';
 export 'src/util/log_util.dart';
 export 'src/util/route_util.dart';
+export 'src/util/screen_util.dart';
 export 'src/util/store_util.dart';
 export 'src/util/toast_util.dart';
 export 'src/util/transition_util.dart';
@@ -59,6 +60,13 @@ export 'src/widget/no_padding_single_child_scroll_view.dart';
 export 'src/widget/resize_switch.dart';
 export 'src/widget/spacer.dart';
 export 'src/widget/tap_wrapper.dart';
+
+class FlutterWhale {
+  static Future<void> init() async {
+    ScreenUtil.init();
+    await SharedPreferences.getInstance().then(StoreUtil.shared.init);
+  }
+}
 
 Future<Directory> getAppDir([String? dirName]) async {
   Directory? dir;
