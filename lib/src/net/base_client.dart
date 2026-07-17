@@ -117,6 +117,8 @@ abstract class BaseClient {
           return error;
         }
         return '未知错误，请稍后再试（${error.runtimeType}）';
+      case DioExceptionType.transformTimeout:
+        return '数据转换超时';
     }
   }
 

@@ -123,3 +123,8 @@
 - 新增screen_util.dart文件实现ScreenUtil工具类
 - 使用FlutterView直接获取物理屏幕尺寸和安全区域
 - 更新flutter_whale.dart导出ScreenUtil并添加初始化方法
+
+## 2.3.7
+
+- 更新dio依赖从5.3.3到5.10.0版本
+- 添加DioExceptionType.transformTimeout类型的错误处理
