@@ -90,13 +90,17 @@ class RouteUtil {
   }
 
   static void pop<T>({T? result, BuildContext? context}) {
+    _ignoreLoadingWhenDidPop = true;
     Navigator.of(context ?? baseContext).pop<T>(result);
   }
 
   static void popUntil(RoutePredicate predicate, {BuildContext? context}) {
+    _ignoreLoadingWhenDidPop = true;
     Navigator.of(context ?? baseContext).popUntil(predicate);
   }
 }
+
+bool _ignoreLoadingWhenDidPop = false;
 
 class PageTransition<T> extends PageRouteBuilder<T> {
   final Widget child;
@@ -138,7 +142,8 @@ class PageTransition<T> extends PageRouteBuilder<T> {
 
   @override
   bool didPop(T? result) {
-    if (DialogUtil.loadingIsShowing) return false;
+    if (!_ignoreLoadingWhenDidPop && DialogUtil.loadingIsShowing) return false;
+    _ignoreLoadingWhenDidPop = false;
     return super.didPop(result);
   }
 }

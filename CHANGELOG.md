@@ -128,3 +128,9 @@
 
 - 更新dio依赖从5.3.3到5.10.0版本
 - 添加DioExceptionType.transformTimeout类型的错误处理
+
+## 2.3.8
+
+- 在 pop 和 popUntil 方法中设置忽略加载状态标志
+- 修改 didPop 方法逻辑，检查忽略标志后再判断加载状态
+- 重置忽略加载状态标志以确保正常流程
