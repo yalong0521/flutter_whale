@@ -50,7 +50,7 @@ class DialogUtil {
     if (loadingOverlay == null) return;
     loadingOverlay.entry.remove();
     _loadingOverlayMap.remove(ctx);
-    FocusScope.of(ctx).requestFocus();
+    if (ctx.mounted) FocusScope.of(ctx).requestFocus();
   }
 
   static Future<T?> to<T>(

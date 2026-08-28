@@ -134,3 +134,8 @@
 - 在 pop 和 popUntil 方法中设置忽略加载状态标志
 - 修改 didPop 方法逻辑，检查忽略标志后再判断加载状态
 - 重置忽略加载状态标志以确保正常流程
+
+## 2.3.9
+
+- 新增 `RouteUtil.maybePop`，支持遵守 `PopScope` 的用户主动退出场景
+- 修复 Loading 关闭后在已销毁 Context 上恢复焦点的问题

@@ -94,6 +94,14 @@ class RouteUtil {
     Navigator.of(context ?? baseContext).pop<T>(result);
   }
 
+  /// 尝试关闭当前路由，并遵守路由中的 [PopScope] 等退出约束。
+  ///
+  /// 适用于标题栏关闭、返回键等用户主动触发的退出操作。业务完成后必须关闭
+  /// 路由的场景仍应使用 [pop]。
+  static Future<bool> maybePop<T>({T? result, BuildContext? context}) {
+    return Navigator.of(context ?? baseContext).maybePop<T>(result);
+  }
+
   static void popUntil(RoutePredicate predicate, {BuildContext? context}) {
     _ignoreLoadingWhenDidPop = true;
     Navigator.of(context ?? baseContext).popUntil(predicate);
