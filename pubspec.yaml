@@ -1,11 +1,11 @@
 name: flutter_whale
 description: Project base component.
-version: 2.3.9
+version: 3.0.0
 repository: https://github.com/yalong0521/flutter_whale
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
-  flutter: ">=1.17.0"
+  sdk: '>=3.12.0 <4.0.0'
+  flutter: ">=3.44.0"
 
 dependencies:
   flutter:
@@ -19,6 +19,8 @@ dependencies:
   flutter_portal: ^1.1.4
   visibility_detector: ^0.4.0+2
 
+  material_ui: ^1.1.1
+  cupertino_ui: ^1.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_whale/src/util/date_format.dart' as f;
 
 extension DateTimeExt on DateTime {

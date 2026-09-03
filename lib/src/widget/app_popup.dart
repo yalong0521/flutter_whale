@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_whale/flutter_whale.dart';
 import 'package:flutter_whale/src/util/screen_util.dart';
 

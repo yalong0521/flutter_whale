@@ -1,5 +1,5 @@
 import 'package:example/pages/main_page.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_whale/flutter_whale.dart';
 
 void main() {

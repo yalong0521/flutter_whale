@@ -139,3 +139,9 @@
 
 - 新增 `RouteUtil.maybePop`，支持遵守 `PopScope` 的用户主动退出场景
 - 修复 Loading 关闭后在已销毁 Context 上恢复焦点的问题
+
+## 3.0.0
+
+- **BREAKING**：将 Material 与 Cupertino 实现迁移到独立的 `material_ui` 和 `cupertino_ui` 包
+- **BREAKING**：最低支持环境调整为 Dart 3.12、Flutter 3.44
+- 应用需改用 `package:material_ui/material_ui.dart`；仍依赖旧版 Material API 的子树可按需使用 `MaterialUiCompatibilityBridge`

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class HSpacer extends SizedBox {
   const HSpacer(double value, {super.key}) : super(width: value);

@@ -1,5 +1,5 @@
 import 'package:example/pages/main_model.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_whale/flutter_whale.dart';
 
 class MainPage extends BasePage<MainModel> {
