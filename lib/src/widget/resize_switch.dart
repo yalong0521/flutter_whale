@@ -21,12 +21,13 @@ class ResizeSwitch extends StatelessWidget {
   final bool enable;
   final double? size;
 
-  const ResizeSwitch(
-      {required this.value,
-      required this.onChanged,
-      this.enable = true,
-      this.size,
-      super.key});
+  const ResizeSwitch({
+    required this.value,
+    required this.onChanged,
+    this.enable = true,
+    this.size,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -218,11 +219,22 @@ class AppSwitch extends StatefulWidget {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(FlagProperty('value',
-        value: value, ifTrue: 'on', ifFalse: 'off', showName: true));
-    properties.add(ObjectFlagProperty<ValueChanged<bool>>(
-        'onChanged', onChanged,
-        ifNull: 'disabled'));
+    properties.add(
+      FlagProperty(
+        'value',
+        value: value,
+        ifTrue: 'on',
+        ifFalse: 'off',
+        showName: true,
+      ),
+    );
+    properties.add(
+      ObjectFlagProperty<ValueChanged<bool>>(
+        'onChanged',
+        onChanged,
+        ifNull: 'disabled',
+      ),
+    );
   }
 }
 
@@ -404,17 +416,17 @@ class _AppSwitchState extends State<AppSwitch> with TickerProviderStateMixin {
     );
     final (Color onLabelColor, Color offLabelColor)? onOffLabelColors =
         MediaQuery.onOffSwitchLabelsOf(context)
-            ? (
-                CupertinoDynamicColor.resolve(
-                  widget.onLabelColor ?? CupertinoColors.white,
-                  context,
-                ),
-                CupertinoDynamicColor.resolve(
-                  widget.offLabelColor ?? _kOffLabelColor,
-                  context,
-                ),
-              )
-            : null;
+        ? (
+            CupertinoDynamicColor.resolve(
+              widget.onLabelColor ?? CupertinoColors.white,
+              context,
+            ),
+            CupertinoDynamicColor.resolve(
+              widget.offLabelColor ?? _kOffLabelColor,
+              context,
+            ),
+          )
+        : null;
     if (needsPositionAnimation) {
       _resumePositionAnimation();
     }
@@ -423,8 +435,9 @@ class _AppSwitchState extends State<AppSwitch> with TickerProviderStateMixin {
           ? SystemMouseCursors.click
           : MouseCursor.defer,
       child: Opacity(
-        opacity:
-            widget.onChanged == null ? _kCupertinoSwitchDisabledOpacity : 1.0,
+        opacity: widget.onChanged == null
+            ? _kCupertinoSwitchDisabledOpacity
+            : 1.0,
         child: FocusableActionDetector(
           onShowFocusHighlight: _onShowFocusHighlight,
           actions: _actionMap,
@@ -436,19 +449,22 @@ class _AppSwitchState extends State<AppSwitch> with TickerProviderStateMixin {
             value: widget.value,
             activeColor: activeColor,
             trackColor: CupertinoDynamicColor.resolve(
-                widget.trackColor ?? CupertinoColors.secondarySystemFill,
-                context),
+              widget.trackColor ?? CupertinoColors.secondarySystemFill,
+              context,
+            ),
             thumbColor: CupertinoDynamicColor.resolve(
-                widget.thumbColor ?? CupertinoColors.white, context),
+              widget.thumbColor ?? CupertinoColors.white,
+              context,
+            ),
             // Opacity, lightness, and saturation values were approximated with
             // color pickers on the switches in the macOS settings.
             focusColor: CupertinoDynamicColor.resolve(
-                widget.focusColor ??
-                    HSLColor.fromColor(activeColor.withAlpha(204))
-                        .withLightness(0.69)
-                        .withSaturation(0.835)
-                        .toColor(),
-                context),
+              widget.focusColor ??
+                  HSLColor.fromColor(
+                    activeColor.withAlpha(204),
+                  ).withLightness(0.69).withSaturation(0.835).toColor(),
+              context,
+            ),
             onChanged: widget.onChanged,
             textDirection: Directionality.of(context),
             isFocused: isFocused,
@@ -541,8 +557,8 @@ const double _kOnLabelPaddingHorizontal = 11.0;
 const double _kOffLabelWidth = 1.0;
 const double _kOffLabelPaddingHorizontal = 12.0;
 const double _kOffLabelRadius = 5.0;
-const CupertinoDynamicColor _kOffLabelColor =
-    CupertinoDynamicColor.withBrightnessAndContrast(
+const CupertinoDynamicColor
+_kOffLabelColor = CupertinoDynamicColor.withBrightnessAndContrast(
   debugLabel: 'offSwitchLabel',
   // Source: https://github.com/flutter/flutter/pull/39993#discussion_r321946033
   color: Color.fromARGB(255, 179, 179, 179),
@@ -570,19 +586,22 @@ class _RenderAppSwitch extends RenderConstrainedBox {
     required bool isFocused,
     required _AppSwitchState state,
     required (Color onLabelColor, Color offLabelColor)? onOffLabelColors,
-  })  : _value = value,
-        _activeColor = activeColor,
-        _trackColor = trackColor,
-        _focusColor = focusColor,
-        _thumbPainter = CupertinoThumbPainter.switchThumb(color: thumbColor),
-        _onChanged = onChanged,
-        _textDirection = textDirection,
-        _isFocused = isFocused,
-        _state = state,
-        _onOffLabelColors = onOffLabelColors,
-        super(
-            additionalConstraints: const BoxConstraints.tightFor(
-                width: _kSwitchWidth, height: _kSwitchHeight)) {
+  }) : _value = value,
+       _activeColor = activeColor,
+       _trackColor = trackColor,
+       _focusColor = focusColor,
+       _thumbPainter = CupertinoThumbPainter.switchThumb(color: thumbColor),
+       _onChanged = onChanged,
+       _textDirection = textDirection,
+       _isFocused = isFocused,
+       _state = state,
+       _onOffLabelColors = onOffLabelColors,
+       super(
+         additionalConstraints: const BoxConstraints.tightFor(
+           width: _kSwitchWidth,
+           height: _kSwitchHeight,
+         ),
+       ) {
     state.position.addListener(markNeedsPaint);
     state._reaction.addListener(markNeedsPaint);
   }
@@ -741,7 +760,9 @@ class _RenderAppSwitch extends RenderConstrainedBox {
       _kTrackHeight,
     );
     final RRect trackRRect = RRect.fromRectAndRadius(
-        trackRect, const Radius.circular(_kTrackRadius));
+      trackRect,
+      const Radius.circular(_kTrackRadius),
+    );
     canvas.drawRRect(trackRRect, paint);
 
     if (_isFocused) {
@@ -763,22 +784,26 @@ class _RenderAppSwitch extends RenderConstrainedBox {
           visualPosition * (1.0 - currentReactionValue);
       final double rightLabelOpacity =
           (1.0 - visualPosition) * (1.0 - currentReactionValue);
-      final (double onLabelOpacity, double offLabelOpacity) =
-          switch (textDirection) {
+      final (
+        double onLabelOpacity,
+        double offLabelOpacity,
+      ) = switch (textDirection) {
         TextDirection.ltr => (leftLabelOpacity, rightLabelOpacity),
         TextDirection.rtl => (rightLabelOpacity, leftLabelOpacity),
       };
 
-      final (Offset onLabelOffset, Offset offLabelOffset) =
-          switch (textDirection) {
+      final (
+        Offset onLabelOffset,
+        Offset offLabelOffset,
+      ) = switch (textDirection) {
         TextDirection.ltr => (
-            trackRect.centerLeft.translate(_kOnLabelPaddingHorizontal, 0),
-            trackRect.centerRight.translate(-_kOffLabelPaddingHorizontal, 0),
-          ),
+          trackRect.centerLeft.translate(_kOnLabelPaddingHorizontal, 0),
+          trackRect.centerRight.translate(-_kOffLabelPaddingHorizontal, 0),
+        ),
         TextDirection.rtl => (
-            trackRect.centerRight.translate(-_kOnLabelPaddingHorizontal, 0),
-            trackRect.centerLeft.translate(_kOffLabelPaddingHorizontal, 0),
-          ),
+          trackRect.centerRight.translate(-_kOnLabelPaddingHorizontal, 0),
+          trackRect.centerLeft.translate(_kOffLabelPaddingHorizontal, 0),
+        ),
       };
 
       // Draws '|' label
@@ -797,11 +822,7 @@ class _RenderAppSwitch extends RenderConstrainedBox {
         ..color = offLabelColor.withAlpha((offLabelOpacity * 255).round())
         ..style = PaintingStyle.stroke
         ..strokeWidth = _kOffLabelWidth;
-      canvas.drawCircle(
-        offLabelOffset,
-        _kOffLabelRadius,
-        offLabelPaint,
-      );
+      canvas.drawCircle(offLabelOffset, _kOffLabelRadius, offLabelPaint);
     }
 
     final double currentThumbExtension =
@@ -830,11 +851,16 @@ class _RenderAppSwitch extends RenderConstrainedBox {
       thumbCenterY + CupertinoThumbPainter.radius,
     );
 
-    _clipRRectLayer.layer = context
-        .pushClipRRect(needsCompositing, Offset.zero, thumbBounds, trackRRect,
-            (PaintingContext innerContext, Offset offset) {
-      _thumbPainter.paint(innerContext.canvas, thumbBounds);
-    }, oldLayer: _clipRRectLayer.layer);
+    _clipRRectLayer.layer = context.pushClipRRect(
+      needsCompositing,
+      Offset.zero,
+      thumbBounds,
+      trackRRect,
+      (PaintingContext innerContext, Offset offset) {
+        _thumbPainter.paint(innerContext.canvas, thumbBounds);
+      },
+      oldLayer: _clipRRectLayer.layer,
+    );
   }
 
   final LayerHandle<ClipRRectLayer> _clipRRectLayer =
@@ -849,13 +875,24 @@ class _RenderAppSwitch extends RenderConstrainedBox {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description.add(FlagProperty('value',
-        value: value, ifTrue: 'checked', ifFalse: 'unchecked', showName: true));
-    description.add(FlagProperty('isInteractive',
+    description.add(
+      FlagProperty(
+        'value',
+        value: value,
+        ifTrue: 'checked',
+        ifFalse: 'unchecked',
+        showName: true,
+      ),
+    );
+    description.add(
+      FlagProperty(
+        'isInteractive',
         value: isInteractive,
         ifTrue: 'enabled',
         ifFalse: 'disabled',
         showName: true,
-        defaultValue: true));
+        defaultValue: true,
+      ),
+    );
   }
 }

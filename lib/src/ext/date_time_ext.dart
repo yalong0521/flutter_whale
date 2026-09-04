@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_whale/src/util/date_format.dart' as f;
+import 'package:material_ui/material_ui.dart';
 
 extension DateTimeExt on DateTime {
   bool belong(DateTimeRange range) {
@@ -30,8 +30,17 @@ extension DateTimeExt on DateTime {
   }
 
   String formatDateTime(String split) {
-    return f.formatDate(
-        this, [f.yyyy, split, f.mm, split, f.dd, ' ', f.kHH, ':', f.nn]);
+    return f.formatDate(this, [
+      f.yyyy,
+      split,
+      f.mm,
+      split,
+      f.dd,
+      ' ',
+      f.kHH,
+      ':',
+      f.nn,
+    ]);
   }
 
   /// ---> 2023-11-29 10:58
@@ -41,8 +50,19 @@ extension DateTimeExt on DateTime {
   String get formatDateTimePoint => formatDateTime('.');
 
   String formatDateTimeFull(String split) {
-    return f.formatDate(this,
-        [f.yyyy, split, f.mm, split, f.dd, ' ', f.kHH, ':', f.nn, ':', f.ss]);
+    return f.formatDate(this, [
+      f.yyyy,
+      split,
+      f.mm,
+      split,
+      f.dd,
+      ' ',
+      f.kHH,
+      ':',
+      f.nn,
+      ':',
+      f.ss,
+    ]);
   }
 
   /// ---> 2023-11-29 10:58:28

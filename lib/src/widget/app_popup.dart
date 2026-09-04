@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_whale/flutter_whale.dart';
-import 'package:flutter_whale/src/util/screen_util.dart';
 
 class AppPopup extends StatefulWidget {
   final ButtonViewBuilder buttonViewBuilder;
@@ -14,6 +13,10 @@ class AppPopup extends StatefulWidget {
   final bool popupVisible;
   final bool outsideDismissible;
   final List<PortalLabel<dynamic>> portalCandidateLabels;
+
+  /// 将越界弹层沿指定轴移回选中的 Portal 范围，可能覆盖触发控件。
+  /// 默认沿双轴平移；需要保留原锚点关系时可传入 const AxisFlag()。
+  final AxisFlag shiftToWithinBound;
   final ValueChanged<bool>? onPopupVisibleChanged;
 
   const AppPopup({
@@ -26,6 +29,7 @@ class AppPopup extends StatefulWidget {
     this.popupVisible = false,
     this.outsideDismissible = true,
     this.portalCandidateLabels = const [PortalLabel.main],
+    this.shiftToWithinBound = const AxisFlag(x: true, y: true),
     this.onPopupVisibleChanged,
     super.key,
   });
@@ -37,6 +41,7 @@ class AppPopup extends StatefulWidget {
 class _AppPopupState extends State<AppPopup> {
   final GlobalKey _buttonKey = GlobalKey();
   final GlobalKey _popupKey = GlobalKey();
+  final _PopupGeometry _popupGeometry = _PopupGeometry();
   late bool _visible = widget.popupVisible;
   late PopupAlignment _popupAlignment = widget.popupAlignment;
   bool _firstVisible = false;
@@ -76,8 +81,13 @@ class _AppPopupState extends State<AppPopup> {
       tween: Tween(begin: 0, end: _visible ? 1 : 0),
       builder: (context, progress, child) {
         return widget.popupAnimator
-            .build(_popupSize ?? Size.zero, _popupAlignment, buttonAlignment,
-                progress, child!)
+            .build(
+              _popupSize ?? Size.zero,
+              _popupAlignment,
+              buttonAlignment,
+              progress,
+              child!,
+            )
             .padding(_getOffset());
       },
       child: Builder(
@@ -86,7 +96,14 @@ class _AppPopupState extends State<AppPopup> {
           final popupBgShape = widget.popupBgShape;
           final buttonRect = _buttonRect ?? Rect.zero;
           return popupBgShape != null
-              ? popupBgShape.build(_popupAlignment, buttonRect, popupView)
+              ? _PopupGeometryScope(
+                  geometry: _popupGeometry,
+                  child: popupBgShape.build(
+                    _popupAlignment,
+                    buttonRect,
+                    popupView,
+                  ),
+                )
               : popupView;
         },
       ),
@@ -103,9 +120,14 @@ class _AppPopupState extends State<AppPopup> {
     return PortalTarget(
       visible: visible,
       portalCandidateLabels: widget.portalCandidateLabels,
-      anchor: Aligned(
+      anchor: _PopupAnchor(
         follower: buttonAlignment,
         target: _getPopupAlignment(),
+        shiftToWithinBound: widget.shiftToWithinBound,
+        geometry: _popupGeometry,
+        backgroundOffset: _getOffset()
+            .resolve(Directionality.of(context))
+            .topLeft,
       ),
       closeDuration: kThemeAnimationDuration,
       portalFollower: widget.outsideDismissible
@@ -183,7 +205,7 @@ class _AppPopupState extends State<AppPopup> {
   PopupAlignment _reverseIfNotEnough(Size popupSize, Rect buttonRect) {
     final bottomNeedReverse =
         ScreenUtil.screenHeight - buttonRect.bottom - _offset <
-            popupSize.height;
+        popupSize.height;
     final topNeedReverse = buttonRect.top - _offset < popupSize.height;
     final startNeedReverse = buttonRect.left - _offset < popupSize.width;
     final endNeedReverse =
@@ -317,6 +339,12 @@ class _AppPopupState extends State<AppPopup> {
   }
 
   @override
+  void dispose() {
+    _popupGeometry.dispose();
+    super.dispose();
+  }
+
+  @override
   void didUpdateWidget(covariant AppPopup oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.popupVisible != widget.popupVisible) {
@@ -326,8 +354,98 @@ class _AppPopupState extends State<AppPopup> {
   }
 }
 
-typedef ButtonViewBuilder = Widget Function(
-    bool popupVisible, VoidCallback onButtonTap);
+class _PopupAnchor extends Aligned {
+  final _PopupGeometry geometry;
+  final Offset backgroundOffset;
+
+  const _PopupAnchor({
+    required super.follower,
+    required super.target,
+    required super.shiftToWithinBound,
+    required this.geometry,
+    required this.backgroundOffset,
+  });
+
+  @override
+  Offset getFollowerOffset({
+    required Size followerSize,
+    required Size targetSize,
+    required Rect theaterRect,
+  }) {
+    final position = super.getFollowerOffset(
+      followerSize: followerSize,
+      targetSize: targetSize,
+      theaterRect: theaterRect,
+    );
+    // 使用最终 Portal 定位，并扣除弹层外的间距，转换到背景的局部坐标。
+    geometry.updateTargetRect((-position - backgroundOffset) & targetSize);
+    return position;
+  }
+
+  // flutter_portal 1.1.4 的相等判断遗漏了边界配置，导致原地更新被忽略。
+  @override
+  bool operator ==(Object other) =>
+      other is _PopupAnchor &&
+      super == other &&
+      shiftToWithinBound.x == other.shiftToWithinBound.x &&
+      shiftToWithinBound.y == other.shiftToWithinBound.y &&
+      backgroundOffset == other.backgroundOffset &&
+      geometry == other.geometry;
+
+  @override
+  int get hashCode => Object.hash(
+    super.hashCode,
+    shiftToWithinBound.x,
+    shiftToWithinBound.y,
+    backgroundOffset,
+    geometry,
+  );
+}
+
+class _PopupGeometry extends ChangeNotifier {
+  Rect? _targetRect;
+  bool _notificationPending = false;
+  bool _disposed = false;
+
+  /// 触发器在弹层背景坐标系中的边界，不包含进出场动画变换。
+  Rect? get targetRectInPopup => _targetRect;
+
+  void updateTargetRect(Rect value) {
+    if (_disposed || _targetRect == value) return;
+    _targetRect = value;
+    if (_notificationPending) return;
+    _notificationPending = true;
+    // 定位发生在合成阶段，同帧更新合并到帧后，仅通知画笔重绘，不重建弹层。
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _notificationPending = false;
+      if (!_disposed) notifyListeners();
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+}
+
+class _PopupGeometryScope extends InheritedWidget {
+  final _PopupGeometry geometry;
+
+  const _PopupGeometryScope({required this.geometry, required super.child});
+
+  static _PopupGeometry? maybeOf(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<_PopupGeometryScope>()
+      ?.geometry;
+
+  @override
+  bool updateShouldNotify(_PopupGeometryScope oldWidget) =>
+      geometry != oldWidget.geometry;
+}
+
+typedef ButtonViewBuilder =
+    Widget Function(bool popupVisible, VoidCallback onButtonTap);
 typedef PopupViewBuilder = Widget Function(VoidCallback dismissPopup);
 
 abstract class PopupBgShape {
@@ -339,17 +457,27 @@ class TwinkleBgShape extends PopupBgShape {
   final Color bgColor;
   final double radius;
 
-  TwinkleBgShape(
-      {double? triangleSize, this.bgColor = Colors.white, double? radius})
-      : triangleSize = triangleSize ?? 8.r,
-        radius = radius ?? 4.r;
+  TwinkleBgShape({
+    double? triangleSize,
+    this.bgColor = Colors.white,
+    double? radius,
+  }) : triangleSize = triangleSize ?? 8.r,
+       radius = radius ?? 4.r;
 
   @override
   Widget build(PopupAlignment alignment, Rect buttonRect, Widget child) {
-    return CustomPaint(
-      painter: _TwinkleBgPainter(
-          bgColor, triangleSize, alignment, buttonRect, radius),
-      child: Padding(padding: _getPadding(alignment), child: child),
+    return Builder(
+      builder: (context) => CustomPaint(
+        painter: _TwinkleBgPainter(
+          bgColor,
+          triangleSize,
+          alignment,
+          buttonRect,
+          radius,
+          _PopupGeometryScope.maybeOf(context),
+        ),
+        child: Padding(padding: _getPadding(alignment), child: child),
+      ),
     );
   }
 
@@ -376,20 +504,34 @@ class TwinkleBgShape extends PopupBgShape {
 }
 
 abstract class PopupAnimator {
-  Widget build(Size popupSize, PopupAlignment popupAlignment,
-      AlignmentGeometry buttonAlignment, double animProgress, Widget child);
+  Widget build(
+    Size popupSize,
+    PopupAlignment popupAlignment,
+    AlignmentGeometry buttonAlignment,
+    double animProgress,
+    Widget child,
+  );
 }
 
 class OpacityScaleAnimator extends PopupAnimator {
   @override
-  Widget build(Size popupSize, PopupAlignment popupAlignment,
-      AlignmentGeometry buttonAlignment, double animProgress, Widget child) {
+  Widget build(
+    Size popupSize,
+    PopupAlignment popupAlignment,
+    AlignmentGeometry buttonAlignment,
+    double animProgress,
+    Widget child,
+  ) {
     final opacity = Opacity(opacity: animProgress, child: child);
     return _scale(animProgress, popupAlignment, buttonAlignment, opacity);
   }
 
-  Widget _scale(double progress, PopupAlignment popupAlignment,
-      AlignmentGeometry followerAlignment, Widget child) {
+  Widget _scale(
+    double progress,
+    PopupAlignment popupAlignment,
+    AlignmentGeometry followerAlignment,
+    Widget child,
+  ) {
     switch (popupAlignment) {
       case PopupAlignment.bottomCenter:
       case PopupAlignment.bottomStart:
@@ -398,7 +540,10 @@ class OpacityScaleAnimator extends PopupAnimator {
       case PopupAlignment.topStart:
       case PopupAlignment.topEnd:
         return Transform.scale(
-            scaleY: progress, alignment: followerAlignment, child: child);
+          scaleY: progress,
+          alignment: followerAlignment,
+          child: child,
+        );
       case PopupAlignment.leftCenter:
       case PopupAlignment.leftTop:
       case PopupAlignment.leftBottom:
@@ -406,23 +551,39 @@ class OpacityScaleAnimator extends PopupAnimator {
       case PopupAlignment.rightTop:
       case PopupAlignment.rightBottom:
         return Transform.scale(
-            scaleX: progress, alignment: followerAlignment, child: child);
+          scaleX: progress,
+          alignment: followerAlignment,
+          child: child,
+        );
     }
   }
 }
 
 class OpacityTranslateAnimator extends PopupAnimator {
   @override
-  Widget build(Size popupSize, PopupAlignment popupAlignment,
-      AlignmentGeometry buttonAlignment, double animProgress, Widget child) {
+  Widget build(
+    Size popupSize,
+    PopupAlignment popupAlignment,
+    AlignmentGeometry buttonAlignment,
+    double animProgress,
+    Widget child,
+  ) {
     final opacity = Opacity(opacity: animProgress, child: child);
-    final translate =
-        _translate(popupSize, animProgress, popupAlignment, opacity);
+    final translate = _translate(
+      popupSize,
+      animProgress,
+      popupAlignment,
+      opacity,
+    );
     return ClipRect(child: translate);
   }
 
-  Widget _translate(Size popupSize, double progress,
-      PopupAlignment popupAlignment, Widget child) {
+  Widget _translate(
+    Size popupSize,
+    double progress,
+    PopupAlignment popupAlignment,
+    Widget child,
+  ) {
     switch (popupAlignment) {
       case PopupAlignment.bottomCenter:
       case PopupAlignment.bottomStart:
@@ -462,62 +623,127 @@ class _TwinkleBgPainter extends CustomPainter {
   final double triangle;
   final PopupAlignment alignment;
   final Rect buttonRect;
+  final _PopupGeometry? geometry;
 
   late final Paint _paint = Paint()
     ..color = color
     ..style = PaintingStyle.fill;
 
-  _TwinkleBgPainter(this.color, this.triangle, this.alignment, this.buttonRect,
-      double? radius)
-      : diameter = (radius ?? 4.r) * 2;
+  _TwinkleBgPainter(
+    this.color,
+    this.triangle,
+    this.alignment,
+    this.buttonRect,
+    double? radius,
+    this.geometry,
+  ) : diameter = (radius ?? 4.r) * 2,
+      super(repaint: geometry);
 
   @override
   void paint(Canvas canvas, Size size) {
-    var path = Path();
-    switch (alignment) {
-      case PopupAlignment.topCenter:
-      case PopupAlignment.topStart:
-      case PopupAlignment.topEnd:
-        _drawArrowDown(path, size);
-        break;
-      case PopupAlignment.bottomCenter:
-      case PopupAlignment.bottomStart:
-      case PopupAlignment.bottomEnd:
-        _drawArrowUp(path, size);
-        break;
-      case PopupAlignment.leftCenter:
-      case PopupAlignment.leftTop:
-      case PopupAlignment.leftBottom:
-        _drawArrowRight(path, size);
-        break;
-      case PopupAlignment.rightCenter:
-      case PopupAlignment.rightTop:
-      case PopupAlignment.rightBottom:
-        _drawArrowLeft(path, size);
-        break;
+    final path = Path();
+    if (!_canDrawArrow(size)) {
+      // 弹层移到触发器上方或覆盖触发器后，原朝向已不成立，保留完整背景。
+      path.addRRect(
+        RRect.fromRectAndRadius(
+          Offset.zero & size,
+          Radius.circular(diameter / 2),
+        ),
+      );
+    } else {
+      switch (alignment) {
+        case PopupAlignment.topCenter:
+        case PopupAlignment.topStart:
+        case PopupAlignment.topEnd:
+          _drawArrowDown(path, size);
+          break;
+        case PopupAlignment.bottomCenter:
+        case PopupAlignment.bottomStart:
+        case PopupAlignment.bottomEnd:
+          _drawArrowUp(path, size);
+          break;
+        case PopupAlignment.leftCenter:
+        case PopupAlignment.leftTop:
+        case PopupAlignment.leftBottom:
+          _drawArrowRight(path, size);
+          break;
+        case PopupAlignment.rightCenter:
+        case PopupAlignment.rightTop:
+        case PopupAlignment.rightBottom:
+          _drawArrowLeft(path, size);
+          break;
+      }
     }
 
     canvas.drawShadow(path, Colors.black.withAlpha(153), 6.r, true);
     canvas.drawPath(path, _paint);
   }
 
+  bool _canDrawArrow(Size size) {
+    final target = geometry?.targetRectInPopup;
+    if (target == null) return true;
+    return switch (alignment) {
+      PopupAlignment.bottomCenter ||
+      PopupAlignment.bottomStart ||
+      PopupAlignment.bottomEnd => target.bottom <= 0,
+      PopupAlignment.topCenter ||
+      PopupAlignment.topStart ||
+      PopupAlignment.topEnd => target.top >= size.height,
+      PopupAlignment.leftCenter ||
+      PopupAlignment.leftTop ||
+      PopupAlignment.leftBottom => target.left >= size.width,
+      PopupAlignment.rightCenter ||
+      PopupAlignment.rightTop ||
+      PopupAlignment.rightBottom => target.right <= 0,
+    };
+  }
+
+  double _arrowCenter(Size size, Axis axis) {
+    final horizontal = axis == Axis.horizontal;
+    final extent = horizontal ? size.width : size.height;
+    final targetExtent = horizontal ? buttonRect.width : buttonRect.height;
+    final targetCenter = geometry?.targetRectInPopup?.center;
+    final center =
+        (horizontal ? targetCenter?.dx : targetCenter?.dy) ??
+        switch (alignment) {
+          PopupAlignment.topStart ||
+          PopupAlignment.bottomStart ||
+          PopupAlignment.leftTop ||
+          PopupAlignment.rightTop => targetExtent / 2,
+          PopupAlignment.topEnd ||
+          PopupAlignment.bottomEnd ||
+          PopupAlignment.leftBottom ||
+          PopupAlignment.rightBottom => extent - targetExtent / 2,
+          _ => extent / 2,
+        };
+    final inset = min(diameter / 2 + triangle, extent / 2);
+    return center.clamp(inset, extent - inset).toDouble();
+  }
+
   void _drawArrowDown(Path path, Size size) {
     final width = size.width;
     final height = size.height;
-    final arrowX = switch (alignment) {
-      PopupAlignment.topCenter => width / 2,
-      PopupAlignment.topStart => buttonRect.width / 2,
-      PopupAlignment.topEnd => width - buttonRect.width / 2,
-      _ => width / 2,
-    };
+    final arrowX = _arrowCenter(size, Axis.horizontal);
 
     final leftTopCircle = Rect.fromLTWH(0, 0, diameter, diameter);
-    final rightTopCircle =
-        Rect.fromLTWH(width - diameter, 0, diameter, diameter);
-    final leftBottomCircle =
-        Rect.fromLTWH(0, height - diameter - triangle, diameter, diameter);
+    final rightTopCircle = Rect.fromLTWH(
+      width - diameter,
+      0,
+      diameter,
+      diameter,
+    );
+    final leftBottomCircle = Rect.fromLTWH(
+      0,
+      height - diameter - triangle,
+      diameter,
+      diameter,
+    );
     final rightBottomCircle = Rect.fromLTWH(
-        width - diameter, height - diameter - triangle, diameter, diameter);
+      width - diameter,
+      height - diameter - triangle,
+      diameter,
+      diameter,
+    );
 
     path
       ..moveTo(diameter / 2, 0)
@@ -537,20 +763,27 @@ class _TwinkleBgPainter extends CustomPainter {
   void _drawArrowUp(Path path, Size size) {
     final width = size.width;
     final height = size.height;
-    final arrowX = switch (alignment) {
-      PopupAlignment.bottomCenter => width / 2,
-      PopupAlignment.bottomStart => buttonRect.width / 2,
-      PopupAlignment.bottomEnd => width - buttonRect.width / 2,
-      _ => width / 2,
-    };
+    final arrowX = _arrowCenter(size, Axis.horizontal);
 
     final leftTopCircle = Rect.fromLTWH(0, triangle, diameter, diameter);
-    final rightTopCircle =
-        Rect.fromLTWH(width - diameter, triangle, diameter, diameter);
-    final leftBottomCircle =
-        Rect.fromLTWH(0, height - diameter, diameter, diameter);
-    final rightBottomCircle =
-        Rect.fromLTWH(width - diameter, height - diameter, diameter, diameter);
+    final rightTopCircle = Rect.fromLTWH(
+      width - diameter,
+      triangle,
+      diameter,
+      diameter,
+    );
+    final leftBottomCircle = Rect.fromLTWH(
+      0,
+      height - diameter,
+      diameter,
+      diameter,
+    );
+    final rightBottomCircle = Rect.fromLTWH(
+      width - diameter,
+      height - diameter,
+      diameter,
+      diameter,
+    );
 
     path
       ..moveTo(arrowX, 0)
@@ -570,20 +803,27 @@ class _TwinkleBgPainter extends CustomPainter {
   void _drawArrowRight(Path path, Size size) {
     final width = size.width;
     final height = size.height;
-    final arrowY = switch (alignment) {
-      PopupAlignment.leftCenter => height / 2,
-      PopupAlignment.leftTop => buttonRect.height / 2,
-      PopupAlignment.leftBottom => height - buttonRect.height / 2,
-      _ => height / 2,
-    };
+    final arrowY = _arrowCenter(size, Axis.vertical);
 
     final topLeftCircle = Rect.fromLTWH(0, 0, diameter, diameter);
-    final bottomLeftCircle =
-        Rect.fromLTWH(0, height - diameter, diameter, diameter);
-    final topRightCircle =
-        Rect.fromLTWH(width - triangle - diameter, 0, diameter, diameter);
+    final bottomLeftCircle = Rect.fromLTWH(
+      0,
+      height - diameter,
+      diameter,
+      diameter,
+    );
+    final topRightCircle = Rect.fromLTWH(
+      width - triangle - diameter,
+      0,
+      diameter,
+      diameter,
+    );
     final bottomRightCircle = Rect.fromLTWH(
-        width - triangle - diameter, height - diameter, diameter, diameter);
+      width - triangle - diameter,
+      height - diameter,
+      diameter,
+      diameter,
+    );
 
     path
       ..moveTo(width, arrowY)
@@ -603,20 +843,27 @@ class _TwinkleBgPainter extends CustomPainter {
   void _drawArrowLeft(Path path, Size size) {
     final width = size.width;
     final height = size.height;
-    final arrowY = switch (alignment) {
-      PopupAlignment.rightCenter => height / 2,
-      PopupAlignment.rightTop => buttonRect.height / 2,
-      PopupAlignment.rightBottom => height - buttonRect.height / 2,
-      _ => height / 2,
-    };
+    final arrowY = _arrowCenter(size, Axis.vertical);
 
     final topLeftCircle = Rect.fromLTWH(triangle, 0, diameter, diameter);
-    final bottomLeftCircle =
-        Rect.fromLTWH(triangle, height - diameter, diameter, diameter);
-    final topRightCircle =
-        Rect.fromLTWH(width - diameter, 0, diameter, diameter);
-    final bottomRightCircle =
-        Rect.fromLTWH(width - diameter, height - diameter, diameter, diameter);
+    final bottomLeftCircle = Rect.fromLTWH(
+      triangle,
+      height - diameter,
+      diameter,
+      diameter,
+    );
+    final topRightCircle = Rect.fromLTWH(
+      width - diameter,
+      0,
+      diameter,
+      diameter,
+    );
+    final bottomRightCircle = Rect.fromLTWH(
+      width - diameter,
+      height - diameter,
+      diameter,
+      diameter,
+    );
 
     path
       ..moveTo(0, arrowY)
@@ -638,7 +885,9 @@ class _TwinkleBgPainter extends CustomPainter {
       oldDelegate.color != color ||
       oldDelegate.diameter != diameter ||
       oldDelegate.triangle != triangle ||
-      oldDelegate.alignment != alignment;
+      oldDelegate.alignment != alignment ||
+      oldDelegate.buttonRect != buttonRect ||
+      oldDelegate.geometry != geometry;
 }
 
 enum PopupAlignment {
@@ -653,5 +902,5 @@ enum PopupAlignment {
   leftBottom,
   rightCenter,
   rightTop,
-  rightBottom;
+  rightBottom,
 }

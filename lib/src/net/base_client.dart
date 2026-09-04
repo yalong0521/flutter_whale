@@ -26,7 +26,7 @@ class ErrorResponse<T> extends BaseResponse<T> {
   final dynamic data;
 
   ErrorResponse({this.errorCode, String? errorMsg, this.data})
-      : errorMsg = errorMsg.notNullAndNotEmpty ? errorMsg : null;
+    : errorMsg = errorMsg.notNullAndNotEmpty ? errorMsg : null;
 }
 
 abstract class BaseClient {
@@ -40,16 +40,18 @@ abstract class BaseClient {
     List<Interceptor>? interceptors,
   }) {
     // 初始化dio
-    _dio = Dio(BaseOptions(
-      // 连接服务器超时时间
-      connectTimeout: Duration(seconds: connectTimeout),
-      // 响应流上前后两次接受到数据的间隔
-      receiveTimeout: Duration(seconds: receiveTimeout),
-      // 请求的Content-Type，默认值是"application/json; charset=utf-8",Headers.formUrlEncodedContentType会自动编码请求体.
-      contentType: contentType,
-      // 表示期望以那种格式(方式)接受响应数据。接受四种类型 `json`, `stream`, `plain`, `bytes`. 默认值是 `json`,
-      responseType: responseType,
-    ));
+    _dio = Dio(
+      BaseOptions(
+        // 连接服务器超时时间
+        connectTimeout: Duration(seconds: connectTimeout),
+        // 响应流上前后两次接受到数据的间隔
+        receiveTimeout: Duration(seconds: receiveTimeout),
+        // 请求的Content-Type，默认值是"application/json; charset=utf-8",Headers.formUrlEncodedContentType会自动编码请求体.
+        contentType: contentType,
+        // 表示期望以那种格式(方式)接受响应数据。接受四种类型 `json`, `stream`, `plain`, `bytes`. 默认值是 `json`,
+        responseType: responseType,
+      ),
+    );
     // 根据不同业务添加相应拦截器
     if (interceptors != null) _dio.interceptors.addAll(interceptors);
     // 配置适配器
@@ -293,36 +295,36 @@ abstract class BaseClient {
     }
     var response = await _dio
         .request(
-      path.startsWith('http') ? path : '$baseUrl$path',
-      data: data,
-      queryParameters: parameters,
-      cancelToken: cancelToken,
-      options: options,
-      onSendProgress: onSendProgress,
-      onReceiveProgress: onReceiveProgress,
-    )
+          path.startsWith('http') ? path : '$baseUrl$path',
+          data: data,
+          queryParameters: parameters,
+          cancelToken: cancelToken,
+          options: options,
+          onSendProgress: onSendProgress,
+          onReceiveProgress: onReceiveProgress,
+        )
         .then(
-      (response) {
-        if (showLoading) {
-          if (context == null) {
-            DialogUtil.hideLoading();
-          } else if (context.mounted) {
-            DialogUtil.hideLoading(context: context);
-          }
-        }
-        return response;
-      },
-      onError: (e) {
-        if (showLoading) {
-          if (context == null) {
-            DialogUtil.hideLoading();
-          } else if (context.mounted) {
-            DialogUtil.hideLoading(context: context);
-          }
-        }
-        return _onError(e);
-      },
-    );
+          (response) {
+            if (showLoading) {
+              if (context == null) {
+                DialogUtil.hideLoading();
+              } else if (context.mounted) {
+                DialogUtil.hideLoading(context: context);
+              }
+            }
+            return response;
+          },
+          onError: (e) {
+            if (showLoading) {
+              if (context == null) {
+                DialogUtil.hideLoading();
+              } else if (context.mounted) {
+                DialogUtil.hideLoading(context: context);
+              }
+            }
+            return _onError(e);
+          },
+        );
     if (response.statusCode == 200) {
       try {
         // 不解析，返回原始数据
@@ -347,7 +349,10 @@ abstract class BaseClient {
   }
 
   BaseResponse<T> responseWrapper<T>(
-      data, T Function(dynamic data) parser, dynamic extra);
+    data,
+    T Function(dynamic data) parser,
+    dynamic extra,
+  );
 
   Response _onError(dynamic error) {
     if (error is DioException) {

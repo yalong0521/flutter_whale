@@ -30,10 +30,7 @@ class RouteUtil {
     );
     var navigator = Navigator.of(context ?? baseContext);
     if (clearStack) {
-      return navigator.pushAndRemoveUntil<T>(
-        route,
-        (route) => false,
-      );
+      return navigator.pushAndRemoveUntil<T>(route, (route) => false);
     } else {
       return navigator.push<T>(route);
     }
@@ -133,9 +130,9 @@ class PageTransition<T> extends PageRouteBuilder<T> {
     super.transitionDuration,
     super.reverseTransitionDuration,
   }) : super(
-          pageBuilder: (buildContext, animation, secondaryAnimation) => child,
-          settings: RouteSettings(arguments: arguments, name: name),
-        );
+         pageBuilder: (buildContext, animation, secondaryAnimation) => child,
+         settings: RouteSettings(arguments: arguments, name: name),
+       );
 
   @override
   Widget buildTransitions(
@@ -145,7 +142,13 @@ class PageTransition<T> extends PageRouteBuilder<T> {
     Widget child,
   ) {
     return TransitionUtil.pageTransition(
-        type, _curve, context, animation, child, this);
+      type,
+      _curve,
+      context,
+      animation,
+      child,
+      this,
+    );
   }
 
   @override

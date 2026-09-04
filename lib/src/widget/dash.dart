@@ -38,16 +38,19 @@ class _Dash extends StatelessWidget {
     this.height,
     this.width,
     Key? key,
-  })  : assert(height != null || width != null,
-            'Height or width must be not null'),
-        super(key: key);
+  }) : assert(
+         height != null || width != null,
+         'Height or width must be not null',
+       ),
+       super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Axis direction = height == null ? Axis.vertical : Axis.horizontal;
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        final checkedLength = length ??
+        final checkedLength =
+            length ??
             (direction == Axis.horizontal
                 ? constraints.constrainWidth()
                 : constraints.constrainHeight());

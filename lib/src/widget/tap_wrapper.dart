@@ -10,7 +10,7 @@ enum TapBehavior {
   throttle,
 
   /// 防抖：延迟指定时间触发[milliseconds]
-  debounce;
+  debounce,
 }
 
 class TapWrapper extends StatefulWidget {
@@ -124,7 +124,7 @@ class _TapWrapperState extends State<TapWrapper> {
     _onTap = widget.behavior == TapBehavior.debounce
         ? widget.onTap.debounce(widget.milliseconds)
         : widget.behavior == TapBehavior.throttle
-            ? widget.onTap.throttle(widget.milliseconds)
-            : widget.onTap;
+        ? widget.onTap.throttle(widget.milliseconds)
+        : widget.onTap;
   }
 }

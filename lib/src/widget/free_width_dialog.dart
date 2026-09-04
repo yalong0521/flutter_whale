@@ -1,7 +1,9 @@
 import 'package:material_ui/material_ui.dart';
 
-const EdgeInsets _defaultInsetPadding =
-    EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0);
+const EdgeInsets _defaultInsetPadding = EdgeInsets.symmetric(
+  horizontal: 40.0,
+  vertical: 24.0,
+);
 
 class FreeWidthDialog extends StatelessWidget {
   /// Creates a dialog.
@@ -20,8 +22,8 @@ class FreeWidthDialog extends StatelessWidget {
     this.shape,
     this.alignment,
     this.child,
-  })  : assert(elevation == null || elevation >= 0.0),
-        _fullscreen = false;
+  }) : assert(elevation == null || elevation >= 0.0),
+       _fullscreen = false;
 
   /// Creates a fullscreen dialog.
   ///
@@ -32,14 +34,14 @@ class FreeWidthDialog extends StatelessWidget {
     this.insetAnimationDuration = Duration.zero,
     this.insetAnimationCurve = Curves.decelerate,
     this.child,
-  })  : elevation = 0,
-        shadowColor = null,
-        surfaceTintColor = null,
-        insetPadding = EdgeInsets.zero,
-        clipBehavior = Clip.none,
-        shape = null,
-        alignment = null,
-        _fullscreen = true;
+  }) : elevation = 0,
+       shadowColor = null,
+       surfaceTintColor = null,
+       insetPadding = EdgeInsets.zero,
+       clipBehavior = Clip.none,
+       shape = null,
+       alignment = null,
+       _fullscreen = true;
 
   /// {@template flutter.material.dialog.backgroundColor}
   /// The background color of the surface of this [Dialog].
@@ -180,15 +182,16 @@ class FreeWidthDialog extends StatelessWidget {
         MediaQuery.viewInsetsOf(context) + (insetPadding ?? EdgeInsets.zero);
     final DialogTheme defaults = theme.useMaterial3
         ? (_fullscreen
-            ? _DialogFullscreenDefaultsM3(context)
-            : _DialogDefaultsM3(context))
+              ? _DialogFullscreenDefaultsM3(context)
+              : _DialogDefaultsM3(context))
         : _DialogDefaultsM2(context);
 
     Widget dialogChild;
 
     if (_fullscreen) {
       dialogChild = Material(
-        color: backgroundColor ??
+        color:
+            backgroundColor ??
             dialogTheme.backgroundColor ??
             defaults.backgroundColor,
         child: child,
@@ -197,13 +200,15 @@ class FreeWidthDialog extends StatelessWidget {
       dialogChild = Align(
         alignment: alignment ?? dialogTheme.alignment ?? defaults.alignment!,
         child: Material(
-          color: backgroundColor ??
+          color:
+              backgroundColor ??
               dialogTheme.backgroundColor ??
               Theme.of(context).dialogBackgroundColor,
           elevation: elevation ?? dialogTheme.elevation ?? defaults.elevation!,
           shadowColor:
               shadowColor ?? dialogTheme.shadowColor ?? defaults.shadowColor,
-          surfaceTintColor: surfaceTintColor ??
+          surfaceTintColor:
+              surfaceTintColor ??
               dialogTheme.surfaceTintColor ??
               defaults.surfaceTintColor,
           shape: shape ?? dialogTheme.shape ?? defaults.shape!,
@@ -257,12 +262,13 @@ class _DialogFullscreenDefaultsM3 extends DialogTheme {
 
 class _DialogDefaultsM3 extends DialogTheme {
   _DialogDefaultsM3(this.context)
-      : super(
-          alignment: Alignment.center,
-          elevation: 6.0,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(28.0))),
-        );
+    : super(
+        alignment: Alignment.center,
+        elevation: 6.0,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(28.0)),
+        ),
+      );
 
   final BuildContext context;
   late final ColorScheme _colors = Theme.of(context).colorScheme;
@@ -294,14 +300,15 @@ class _DialogDefaultsM3 extends DialogTheme {
 // Hand coded defaults based on Material Design 2.
 class _DialogDefaultsM2 extends DialogTheme {
   _DialogDefaultsM2(this.context)
-      : _textTheme = Theme.of(context).textTheme,
-        _iconTheme = Theme.of(context).iconTheme,
-        super(
-          alignment: Alignment.center,
-          elevation: 24.0,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(4.0))),
-        );
+    : _textTheme = Theme.of(context).textTheme,
+      _iconTheme = Theme.of(context).iconTheme,
+      super(
+        alignment: Alignment.center,
+        elevation: 24.0,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(4.0)),
+        ),
+      );
 
   final BuildContext context;
   final TextTheme _textTheme;

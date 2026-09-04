@@ -10,14 +10,14 @@ class NoPaddingListView extends ListView {
     ScrollController? controller,
     ScrollPhysics? physics,
   }) : super.builder(
-          itemBuilder: itemBuilder,
-          itemCount: itemCount,
-          padding: EdgeInsets.zero,
-          scrollDirection: scrollDirection,
-          shrinkWrap: shrinkWrap,
-          controller: controller,
-          physics: physics,
-        );
+         itemBuilder: itemBuilder,
+         itemCount: itemCount,
+         padding: EdgeInsets.zero,
+         scrollDirection: scrollDirection,
+         shrinkWrap: shrinkWrap,
+         controller: controller,
+         physics: physics,
+       );
 
   NoPaddingListView.separated({
     super.key,
@@ -29,13 +29,13 @@ class NoPaddingListView extends ListView {
     ScrollController? controller,
     ScrollPhysics? physics,
   }) : super.separated(
-          itemBuilder: itemBuilder,
-          separatorBuilder: separatorBuilder,
-          itemCount: itemCount,
-          padding: EdgeInsets.zero,
-          scrollDirection: scrollDirection,
-          shrinkWrap: shrinkWrap,
-          controller: controller,
-          physics: physics,
-        );
+         itemBuilder: itemBuilder,
+         separatorBuilder: separatorBuilder,
+         itemCount: itemCount,
+         padding: EdgeInsets.zero,
+         scrollDirection: scrollDirection,
+         shrinkWrap: shrinkWrap,
+         controller: controller,
+         physics: physics,
+       );
 }

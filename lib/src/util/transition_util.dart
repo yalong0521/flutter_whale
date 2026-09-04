@@ -17,9 +17,10 @@ class TransitionUtil {
   ) {
     switch (type) {
       case TransitionType.theme:
-        var themeBuilder = Theme.of(context)
-                .pageTransitionsTheme
-                .builders[defaultTargetPlatform] ??
+        var themeBuilder =
+            Theme.of(
+              context,
+            ).pageTransitionsTheme.builders[defaultTargetPlatform] ??
             const CupertinoPageTransitionsBuilder();
         return themeBuilder.buildTransitions(
           pageRoute,
@@ -130,26 +131,34 @@ class TransitionUtil {
         );
       case TransitionType.rightToLeft:
         return SlideTransition(
-          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-              .animate(CurvedAnimation(parent: animation, curve: curve)),
+          position: Tween<Offset>(
+            begin: const Offset(1, 0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: animation, curve: curve)),
           child: child,
         );
       case TransitionType.leftToRight:
         return SlideTransition(
-          position: Tween<Offset>(begin: const Offset(-1, 0), end: Offset.zero)
-              .animate(CurvedAnimation(parent: animation, curve: curve)),
+          position: Tween<Offset>(
+            begin: const Offset(-1, 0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: animation, curve: curve)),
           child: child,
         );
       case TransitionType.topToBottom:
         return SlideTransition(
-          position: Tween<Offset>(begin: const Offset(0, -1), end: Offset.zero)
-              .animate(CurvedAnimation(parent: animation, curve: curve)),
+          position: Tween<Offset>(
+            begin: const Offset(0, -1),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: animation, curve: curve)),
           child: child,
         );
       case TransitionType.bottomToTop:
         return SlideTransition(
-          position: Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
-              .animate(CurvedAnimation(parent: animation, curve: curve)),
+          position: Tween<Offset>(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: animation, curve: curve)),
           child: child,
         );
       case TransitionType.scale:
@@ -193,10 +202,7 @@ class TransitionUtil {
     }
   }
 
-  static Widget _dialogTheme(
-    Animation<double> animation,
-    Widget child,
-  ) {
+  static Widget _dialogTheme(Animation<double> animation, Widget child) {
     if (Platform.isIOS) {
       final CurvedAnimation fadeAnimation = CurvedAnimation(
         parent: animation,

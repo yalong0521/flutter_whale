@@ -26,8 +26,9 @@ class LogsInterceptor extends Interceptor {
         if (options.data is FormData) {
           final formData = options.data as FormData;
           logList.add('请求体(FormData@fields): ${formData.fields.toString()}');
-          final map =
-              formData.files.map((e) => MapEntry(e.key, e.value.filename));
+          final map = formData.files.map(
+            (e) => MapEntry(e.key, e.value.filename),
+          );
           logList.add('请求体(FormData@files): ${map.toString()}');
         } else if (options.data is Map<String, dynamic>) {
           logList.add('请求体(json): ${jsonEncode(options.data)}');

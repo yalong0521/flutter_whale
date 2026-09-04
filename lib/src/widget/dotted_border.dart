@@ -56,10 +56,7 @@ class DottedBorder extends StatelessWidget {
             ),
           ),
         ),
-        Padding(
-          padding: padding,
-          child: child,
-        ),
+        Padding(padding: padding, child: child),
       ],
     );
   }
@@ -158,60 +155,51 @@ class _DashPainter extends CustomPainter {
     double h = size.height;
     double s = size.shortestSide;
 
-    return Path()
-      ..addRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTWH(
-            w > s ? (w - s) / 2 : 0,
-            h > s ? (h - s) / 2 : 0,
-            s,
-            s,
-          ),
-          Radius.circular(s / 2),
-        ),
-      );
+    return Path()..addRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(w > s ? (w - s) / 2 : 0, h > s ? (h - s) / 2 : 0, s, s),
+        Radius.circular(s / 2),
+      ),
+    );
   }
 
   /// Returns a Rounded Rectangular Path with [radius] of [size]
   Path _getRRectPath(Size size, Radius radius) {
-    return Path()
-      ..addRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTWH(
-            strokeWidth / 2,
-            strokeWidth / 2,
-            size.width - strokeWidth,
-            size.height - strokeWidth,
-          ),
-          radius,
+    return Path()..addRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          strokeWidth / 2,
+          strokeWidth / 2,
+          size.width - strokeWidth,
+          size.height - strokeWidth,
         ),
-      );
+        radius,
+      ),
+    );
   }
 
   /// Returns a path of [size]
   Path _getRectPath(Size size) {
-    return Path()
-      ..addRect(
-        Rect.fromLTWH(
-          strokeWidth / 2,
-          strokeWidth / 2,
-          size.width - strokeWidth,
-          size.height - strokeWidth,
-        ),
-      );
+    return Path()..addRect(
+      Rect.fromLTWH(
+        strokeWidth / 2,
+        strokeWidth / 2,
+        size.width - strokeWidth,
+        size.height - strokeWidth,
+      ),
+    );
   }
 
   /// Return an oval path of [size]
   Path _getOvalPath(Size size) {
-    return Path()
-      ..addOval(
-        Rect.fromLTWH(
-          strokeWidth / 2,
-          strokeWidth / 2,
-          size.width - strokeWidth,
-          size.height - strokeWidth,
-        ),
-      );
+    return Path()..addOval(
+      Rect.fromLTWH(
+        strokeWidth / 2,
+        strokeWidth / 2,
+        size.width - strokeWidth,
+        size.height - strokeWidth,
+      ),
+    );
   }
 
   @override
@@ -258,14 +246,14 @@ class DashOffset {
   ///
   /// `percentage` will be clamped between 0.0 and 1.0.
   DashOffset.percentage(double percentage)
-      : _rawVal = percentage.clamp(0.0, 1.0),
-        _dashOffsetType = _DashOffsetType.percentage;
+    : _rawVal = percentage.clamp(0.0, 1.0),
+      _dashOffsetType = _DashOffsetType.percentage;
 
   /// Create a DashOffset that will be measured in terms of absolute pixels
   /// along the length of a [Path] segment.
   const DashOffset.absolute(double start)
-      : _rawVal = start,
-        _dashOffsetType = _DashOffsetType.absolute;
+    : _rawVal = start,
+      _dashOffsetType = _DashOffsetType.absolute;
 
   final double _rawVal;
   final _DashOffsetType _dashOffsetType;

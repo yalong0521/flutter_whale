@@ -16,10 +16,7 @@ class DialogUtil {
 
   static bool get loadingIsShowing => _loadingOverlayMap.isNotEmpty;
 
-  static void showLoading({
-    String? text,
-    BuildContext? context,
-  }) {
+  static void showLoading({String? text, BuildContext? context}) {
     var ctx = context ?? baseContext;
     var loadingOverlay = _loadingOverlayMap[ctx];
     if (loadingOverlay == null || loadingOverlay.text != text) {
@@ -112,12 +109,12 @@ class DialogTransition<T> extends RawDialogRoute<T> {
     super.transitionDuration,
     Object? arguments,
   }) : super(
-          settings: RouteSettings(arguments: arguments),
-          pageBuilder: (buildContext, animation, secondaryAnimation) {
-            final Widget pageChild = Builder(builder: builder);
-            return useSafeArea ? SafeArea(child: pageChild) : pageChild;
-          },
-        );
+         settings: RouteSettings(arguments: arguments),
+         pageBuilder: (buildContext, animation, secondaryAnimation) {
+           final Widget pageChild = Builder(builder: builder);
+           return useSafeArea ? SafeArea(child: pageChild) : pageChild;
+         },
+       );
 
   @override
   Widget buildTransitions(
@@ -180,7 +177,7 @@ class _DefaultLoadingDialogWidget extends StatelessWidget {
               text!,
               style: TextStyle(fontSize: 14.w, color: Colors.white70),
             ),
-          ]
+          ],
         ],
       ),
     );

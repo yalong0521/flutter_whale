@@ -1,10 +1,10 @@
 import 'dart:math';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_whale/flutter_whale.dart';
+import 'package:material_ui/material_ui.dart';
 
-typedef BaseWidgetBuilder = Widget Function(
-    BuildContext context, GlobalKey<NavigatorState> baseKey);
+typedef BaseWidgetBuilder =
+    Widget Function(BuildContext context, GlobalKey<NavigatorState> baseKey);
 
 BuildContext get baseContext => _baseKey.currentContext!;
 
@@ -58,7 +58,8 @@ class AppConfig extends ChangeNotifier {
       dialogTransitionType = newDialogType ?? TransitionType.fade;
     }
     if (newLoadingConfig != loadingConfig) {
-      loadingConfig = newLoadingConfig ??
+      loadingConfig =
+          newLoadingConfig ??
           LoadingConfig(builder: (text) => DefaultLoadingDialog(text));
     }
     if (newDesignSize != null) designSize = newDesignSize;
@@ -115,8 +116,9 @@ class AppConfig extends ChangeNotifier {
   }
 }
 
-LoadingConfig _defaultLoadingConfig =
-    LoadingConfig(builder: (text) => DefaultLoadingDialog(text));
+LoadingConfig _defaultLoadingConfig = LoadingConfig(
+  builder: (text) => DefaultLoadingDialog(text),
+);
 
 class BaseApp extends StatefulWidget {
   final BaseWidgetBuilder builder;
@@ -191,10 +193,12 @@ class LoadingConfig {
   final bool cancelable;
   final Color barrierColor;
 
-  const LoadingConfig(
-      {required this.builder, bool? cancelable, Color? barrierColor})
-      : cancelable = cancelable ?? false,
-        barrierColor = barrierColor ?? Colors.black38;
+  const LoadingConfig({
+    required this.builder,
+    bool? cancelable,
+    Color? barrierColor,
+  }) : cancelable = cancelable ?? false,
+       barrierColor = barrierColor ?? Colors.black38;
 }
 
 typedef ToastBuilder = Toast Function(String text);

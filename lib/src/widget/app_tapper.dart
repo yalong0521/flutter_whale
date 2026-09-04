@@ -38,8 +38,8 @@ class AppTapper extends StatelessWidget {
     this.shadowColor,
     this.elevation = 0,
     bool enableThrottle = true,
-  })  : child = enable ? child : Opacity(opacity: 0.6, child: child),
-        onTap = enableThrottle ? onTap.throttle() : onTap;
+  }) : child = enable ? child : Opacity(opacity: 0.6, child: child),
+       onTap = enableThrottle ? onTap.throttle() : onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -67,13 +67,12 @@ class AppTapper extends StatelessWidget {
             ? const CircleBorder()
             : RoundedRectangleBorder(borderRadius: borderRadius),
         backgroundColor: bgColor,
-        disabledBackgroundColor: disableColor ??
+        disabledBackgroundColor:
+            disableColor ??
             (bgColor == Colors.transparent
                 ? bgColor
                 : Color.lerp(bgColor, disableLerp, disableOpacity)),
-      ).copyWith(
-        overlayColor: _OverlayColorProperty(contrastColor(bgColor)),
-      ),
+      ).copyWith(overlayColor: _OverlayColorProperty(contrastColor(bgColor))),
       child: padding != null ? child.padding(padding!) : child,
     );
     return enable || bgColor != Colors.transparent

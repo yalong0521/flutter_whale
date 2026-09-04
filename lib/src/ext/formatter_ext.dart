@@ -1,8 +1,9 @@
 import 'package:flutter/services.dart';
 
 /// 任意2位小数类型，可为0
-final _doubleExp =
-    RegExp(r'^(?!0\d|\d*\.\d{3,}|^\.)((0|[1-9]\d*)(\.\d{0,2})?)?$');
+final _doubleExp = RegExp(
+  r'^(?!0\d|\d*\.\d{3,}|^\.)((0|[1-9]\d*)(\.\d{0,2})?)?$',
+);
 
 /// 1位任意数字
 final _singleNumExp = RegExp(r'^([0-9])?$');
@@ -12,11 +13,13 @@ final _doubleNumExp = RegExp(r'^(?!0)\d{0,2}$');
 
 var doubleTextInputFormatter = CustomInputFormatter.fromRegExp(_doubleExp);
 
-var singleNumTextInputFormatter =
-    CustomInputFormatter.fromRegExp(_singleNumExp);
+var singleNumTextInputFormatter = CustomInputFormatter.fromRegExp(
+  _singleNumExp,
+);
 
-var doubleNumTextInputFormatter =
-    CustomInputFormatter.fromRegExp(_doubleNumExp);
+var doubleNumTextInputFormatter = CustomInputFormatter.fromRegExp(
+  _doubleNumExp,
+);
 
 class CustomInputFormatter extends TextInputFormatter {
   final RegExp regExp;
@@ -29,7 +32,9 @@ class CustomInputFormatter extends TextInputFormatter {
 
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     final newString = newValue.text;
     if (!regExp.hasMatch(newString)) return oldValue;
     return newValue;

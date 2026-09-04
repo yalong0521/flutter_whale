@@ -4,10 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_whale/flutter_whale.dart';
 
-enum LogLevel {
-  info,
-  error;
-}
+enum LogLevel { info, error }
 
 const kDefaultPath = 'default';
 const kHttpClientLogPath = 'http';
@@ -64,8 +61,11 @@ class LogUtil {
     _logFileHeader = logFileHeader;
   }
 
-  void log(Object? object,
-      {String path = kDefaultPath, LogLevel level = LogLevel.info}) async {
+  void log(
+    Object? object, {
+    String path = kDefaultPath,
+    LogLevel level = LogLevel.info,
+  }) async {
     if (object == null) return;
     String log;
     if (object is List) {
@@ -89,7 +89,11 @@ class LogUtil {
   }
 
   Future _log2File(
-      String path, LogLevel level, DateTime dateTime, String log) async {
+    String path,
+    LogLevel level,
+    DateTime dateTime,
+    String log,
+  ) async {
     var logLevelPath = (await _getLogPathLevelDir(path, level)).path;
     var logFileName = formatDate(dateTime, [yyyy, mm, dd, kHH]);
     var logFile = File(join(logLevelPath, '${logFileName}00$kLogFileSuffix'));

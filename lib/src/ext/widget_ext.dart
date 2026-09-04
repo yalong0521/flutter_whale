@@ -47,8 +47,12 @@ extension WidgetExt on Widget {
     );
   }
 
-  Widget paddingOnly(
-      {double start = 0, double top = 0, double end = 0, double bottom = 0}) {
+  Widget paddingOnly({
+    double start = 0,
+    double top = 0,
+    double end = 0,
+    double bottom = 0,
+  }) {
     return Padding(
       padding: EdgeInsetsDirectional.only(
         start: start,

@@ -44,10 +44,11 @@ extension TextEditingControllerExt on TextEditingController {
       var start = min(baseOffset, extentOffset);
       var end = max(baseOffset, extentOffset);
       newValue = value.copyWith(
-        text: (text.characters.toList()
-              ..removeRange(start, end)
-              ..insert(start, str))
-            .join(),
+        text:
+            (text.characters.toList()
+                  ..removeRange(start, end)
+                  ..insert(start, str))
+                .join(),
         selection: TextSelection.collapsed(offset: start + str.length),
       );
     } else {

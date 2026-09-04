@@ -228,8 +228,11 @@ const String Z = 'Z';
 
 const String escape = '\\';
 
-String formatDate(DateTime date, List<String> formats,
-    {DateLocale locale = const EnglishDateLocale()}) {
+String formatDate(
+  DateTime date,
+  List<String> formats, {
+  DateLocale locale = const EnglishDateLocale(),
+}) {
   final sb = StringBuffer();
 
   for (String format in formats) {
@@ -357,7 +360,7 @@ class EnglishDateLocale implements DateLocale {
     'Sep',
     'Oct',
     'Nov',
-    'Dec'
+    'Dec',
   ];
 
   @override
@@ -373,7 +376,7 @@ class EnglishDateLocale implements DateLocale {
     'September',
     'October',
     'November',
-    'December'
+    'December',
   ];
 
   @override
@@ -384,7 +387,7 @@ class EnglishDateLocale implements DateLocale {
     'Thur',
     'Fri',
     'Sat',
-    'Sun'
+    'Sun',
   ];
 
   @override
@@ -395,7 +398,7 @@ class EnglishDateLocale implements DateLocale {
     'Thursday',
     'Friday',
     'Saturday',
-    'Sunday'
+    'Sunday',
   ];
 
   @override
@@ -421,7 +424,7 @@ class SimplifiedChineseDateLocale implements DateLocale {
     '9月',
     '10月',
     '11月',
-    '12月'
+    '12月',
   ];
 
   @override
@@ -437,7 +440,7 @@ class SimplifiedChineseDateLocale implements DateLocale {
     '九月',
     '十月',
     '十一月',
-    '十二月'
+    '十二月',
   ];
 
   @override
@@ -448,7 +451,7 @@ class SimplifiedChineseDateLocale implements DateLocale {
     '周四',
     '周五',
     '周六',
-    '周日'
+    '周日',
   ];
 
   @override
@@ -459,7 +462,7 @@ class SimplifiedChineseDateLocale implements DateLocale {
     '星期四',
     '星期五',
     '星期六',
-    '星期日'
+    '星期日',
   ];
 
   @override
